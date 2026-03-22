@@ -53,8 +53,13 @@ chmod +x scripts/generate-dev-cert.sh
 node server/dev-https-server.mjs
 ```
 
+Production-style reverse proxy config is included at:
+```bash
+deploy/nginx.blog.chenjilan.com.conf
+```
+
 ## Notes on port 80 and self-signed HTTPS
-Binding directly to port 80 usually requires elevated privileges or a reverse proxy like nginx/Caddy. In environments without root access, develop on high ports first (3000 / 3443), then forward or reverse proxy later.
+Binding directly to port 80 usually requires elevated privileges or a reverse proxy like nginx/Caddy. In environments without root access, develop on high ports first (8080 / 3443), then forward or reverse proxy later.
 
 ## Suggested next steps
 - Move posts to MDX
@@ -62,3 +67,4 @@ Binding directly to port 80 usually requires elevated privileges or a reverse pr
 - Add author-only publishing flow
 - Add deployment via nginx/systemd
 - Add production TLS
+ction TLS
