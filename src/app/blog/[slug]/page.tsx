@@ -16,7 +16,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   return (
     <article className="mx-auto max-w-3xl px-6 py-20">
       <div className="mb-8">
-        <p className="mb-4 text-sm uppercase tracking-[0.22em] text-black/38 dark:text-white/38">Article</p>
+        <p className="mb-4 text-sm uppercase tracking-[0.22em] text-black/38 dark:text-white/38">文章</p>
         <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">{post.title}</h1>
         <div className="mt-5 flex flex-wrap gap-3 text-sm text-black/45 dark:text-white/45">
           <span>{post.date}</span>
