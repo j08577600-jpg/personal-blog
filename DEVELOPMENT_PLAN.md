@@ -1,32 +1,32 @@
-# Development Plan
+# 开发计划
 
-## Stage 1 — MVP foundation
-- Build a minimal technical blog UI
-- Add GitHub authentication
-- Keep content local and static
-- Establish deploy and HTTPS development path
+## 阶段 1：MVP 基础版
+- 搭建极简中文技术博客界面
+- 接入 GitHub 登录
+- 内容先使用本地静态数据
+- 跑通部署与 HTTPS 基础链路
 
-## Stage 2 — Publishing workflow
-- Move posts to MDX
-- Add author-only draft flow
-- Add post metadata, cover images, and tags
-- Add richer SEO and social cards
+## 阶段 2：内容发布流程
+- 将文章迁移到 MDX
+- 增加作者专用草稿流
+- 增加文章元信息、封面图与标签
+- 增加更完整的 SEO 与社交分享卡片
 
-## Stage 3 — Content operations
-- Simple admin dashboard
-- Draft / published states
-- Edit and publish flow
-- Optional Git-backed or database-backed storage
+## 阶段 3：内容运营能力
+- 简单后台控制台
+- 草稿 / 已发布状态管理
+- 编辑与发布流程
+- 可选接入 Git 仓库或数据库作为内容存储
 
-## Stage 4 — Production hardening
-- Reverse proxy on 80/443
-- Long-lived process manager or systemd service
-- Real TLS certificates
-- Monitoring and log rotation
+## 阶段 4：生产化完善
+- 在 80/443 上接入反向代理
+- 接入长期运行的进程管理或 systemd
+- 使用正式 TLS 证书
+- 加入监控与日志轮转
 
-## Stage 5 — Blog expansion
-- Search
+## 阶段 5：博客扩展
+- 搜索
 - RSS / sitemap
-- Project pages
-- Reading lists / notes
-- Analytics
+- 项目页
+- 阅读清单 / 碎片笔记
+- 数据分析

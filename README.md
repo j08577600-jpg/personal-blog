@@ -1,70 +1,72 @@
 # personal-blog
 
-A minimal technical personal blog built with Next.js, TypeScript, Tailwind CSS, and GitHub authentication via NextAuth.
+一个极简的中文技术个人博客项目，基于 Next.js、TypeScript、Tailwind CSS 与 GitHub OAuth（NextAuth）构建。
 
-## Stack
+## 技术栈
 - Next.js
 - TypeScript
 - Tailwind CSS
-- NextAuth (GitHub provider)
+- NextAuth（GitHub 登录）
 
-## Features in v1
-- Minimal home page
-- About page
-- Blog list
-- Dynamic blog post pages from local data
-- GitHub sign-in page
-- Protected dashboard seed page
-- Local HTTPS dev helper with self-signed certs
+## 第一版功能
+- 极简首页
+- 关于页
+- 博客列表页
+- 基于本地数据的文章详情页
+- GitHub 登录页
+- 受保护的控制台种子页
+- 本地 HTTPS 开发辅助脚本
+- 域名反代配置模板
 
-## Setup
+## 初始化
 
 ```bash
 npm install
 cp .env.example .env.local
 ```
 
-Fill in:
+需要填写：
 - `NEXTAUTH_SECRET`
 - `NEXTAUTH_URL`
 - `GITHUB_ID`
 - `GITHUB_SECRET`
 
-## GitHub OAuth app setup
-Create a GitHub OAuth App with:
-- Homepage URL: `http://localhost:3000`
-- Callback URL: `http://localhost:3000/api/auth/callback/github`
+## GitHub OAuth 配置
+正式域名使用：
+- Homepage URL: `https://blog.chenjilan.com`
+- Callback URL: `https://blog.chenjilan.com/api/auth/callback/github`
 
-For HTTPS local development, use:
-- Homepage URL: `https://localhost:3443`
-- Callback URL: `https://localhost:3443/api/auth/callback/github`
+临时本地 HTTP 开发可用：
+- Homepage URL: `http://localhost:8080`
+- Callback URL: `http://localhost:8080/api/auth/callback/github`
 
-## Local development
+## 本地开发
 
-HTTP:
+HTTP：
 ```bash
-npm run dev
+PORT=8080 npm run dev
 ```
 
-HTTPS helper:
+HTTPS 辅助：
 ```bash
 chmod +x scripts/generate-dev-cert.sh
 ./scripts/generate-dev-cert.sh
 node server/dev-https-server.mjs
 ```
 
-Production-style reverse proxy config is included at:
+## 反向代理配置
+项目已附带正式域名的 nginx 配置模板：
+
 ```bash
 deploy/nginx.blog.chenjilan.com.conf
 ```
 
-## Notes on port 80 and self-signed HTTPS
-Binding directly to port 80 usually requires elevated privileges or a reverse proxy like nginx/Caddy. In environments without root access, develop on high ports first (8080 / 3443), then forward or reverse proxy later.
+## 关于 80/443
+直接绑定 80/443 一般需要系统权限，推荐使用 nginx 或 Caddy 做反向代理，再把请求转发到应用监听端口（如 8080）。
 
-## Suggested next steps
-- Move posts to MDX
-- Add protected author tools
-- Add author-only publishing flow
-- Add deployment via nginx/systemd
-- Add production TLS
-ction TLS
+## 下一步建议
+- 把文章内容迁移到 MDX
+- 增加作者专用能力
+- 增加草稿 / 发布流
+- 接入 nginx / systemd 部署
+- 完善正式 HTTPS 与生产配置
