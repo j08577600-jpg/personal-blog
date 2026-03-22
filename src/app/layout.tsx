@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "jay / personal blog",
-  description: "A minimal technical blog about engineering, projects, and working with agents.",
+  title: "jay / 个人博客",
+  description: "一个极简的中文技术博客，记录工程实践、项目进展和 Agent 工作流。",
 };
 
 export default function RootLayout({
@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+    <html lang="zh-CN" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full bg-[#f7f7f5] text-[#111111] dark:bg-[#090909] dark:text-[#f3f3f3]">
         <div className="flex min-h-screen flex-col">
           <SiteHeader />
