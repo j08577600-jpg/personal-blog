@@ -20,9 +20,13 @@ export default function BlogPage() {
         <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">记录构建、交付，以及更认真地思考问题。</h1>
       </div>
       <div className="grid gap-5">
-        {posts.map((post) => (
-          <PostCard key={post.slug} post={post} />
-        ))}
+        {posts.length === 0 ? (
+          <p className="py-12 text-center text-sm text-black/45 dark:text-white/45">
+            暂无文章。
+          </p>
+        ) : (
+          posts.map((post) => <PostCard key={post.slug} post={post} />)
+        )}
       </div>
     </div>
   );
