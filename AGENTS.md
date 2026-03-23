@@ -27,8 +27,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - `planner-codex`：方案 / 执行计划
 - `designer-gemini`：UI / 交互 / 文案（涉及 UI 时先行）
 - `builder-codex`：主开发
-- `reviewer-codex`：主审
+- `reviewer-codex`：技术主审
 - `reviewer-gemini`：二审 / 补盲
+- `reviewer-minimax`：第三视角审查
 - `tester-codex`：测试 / 验收
 
 各角色定义见 `.agent/roles/`。
@@ -38,7 +39,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 1. **P1 方案设计** → 输出 `方案设计.md`
 2. **P2 执行计划** → 输出 `执行计划.md`（无 Plan 不进入开发）
 3. **P3 实现开发** → 持续更新 Plan
-4. **P4 交叉审查** → 输出 `审查报告.md`（未过审不进入测试）
+4. **P4 交叉审查** → 输出 `审查报告.md`（三审：codex 主审 + gemini 二审 + minimax 三审；未过审不进入测试）
 5. **P5 测试验收** → 输出测试结果（未通过不发布）
 6. **P6 发布合并**
 
@@ -49,15 +50,29 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - 未通过测试，不进入发布
 - 实施过程中必须持续更新 Plan
 
+## 模型分工
+
+- **Codex**：方案设计、Plan 编写、编码实现、Bug 修复、技术主审、测试、最终落地
+- **Gemini**：UI / 交互方向提案、页面结构、文案、技术二审
+- **MiniMax**：第三视角审查、安全与风险判断、中文表达与逻辑审查
+
+## 任务编排策略
+
+- **小任务**：主 agent 直接处理
+- **中大型任务**：planner → builder → reviewer → tester
+- **涉及 UI 的任务**：designer-gemini → planner-codex → builder-codex
+
 ## 参考文档
 
 - 完整规范：`.agent/OPENCLAW_WORKFLOW.md`
 - 角色定义：`.agent/roles/`
 - 模板：`.agent/templates/`
 
+---
+
 # 项目规范 — 博客 (personal-blog)
 
-## 1. 技术栈
+## 技术栈
 
 - Next.js 16 App Router（React 19）
 - TypeScript（strict 模式）
@@ -68,9 +83,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 **V1 禁止**：为未来扩展提前抽象数据库层。内容只走文件。
 
----
-
-## 2. 目录结构
+## 目录结构
 
 ```
 src/
@@ -80,7 +93,6 @@ src/
   types/         → 类型扩展
 
 content/posts/   → MDX 文章
-
 public/         → 静态资源
 certs/          → 证书
 deploy/         → nginx 配置
@@ -88,9 +100,9 @@ deploy/         → nginx 配置
 docs/           → 文档
 ```
 
----
+别名：`@/` = `src/`，`@/components/` = `src/components/`。
 
-## 3. 文件命名
+## 文件命名
 
 | 类型 | 约定 |
 |------|------|
@@ -100,64 +112,20 @@ docs/           → 文档
 | UI 组件 | `kebab-case.tsx` |
 | 工具 | `camelCase.ts` |
 
-别名：`@/` = `src/`，`@/components/` = `src/components/`。
-
----
-
-## 4. 组件规则
+## 组件规则
 
 - 默认 Server Component，`async function`
 - 需要交互（onClick / useState）才加 `"use client"`
 - 组件不超过 200 行，超过就拆分
 - 不用行内样式，全用 Tailwind class
 
----
-
-## 5. MDX 文章规范
+## MDX 文章规范
 
 文件名：`yyyy-MM-dd_slug.mdx`
 
-Frontmatter 必须包含：
+Frontmatter 必须包含：`title`、`date`、`slug`、`excerpt`、`tags`、`published`
 
-```yaml
----
-title: 文章标题
-date: yyyy-MM-dd
-slug: url-slug
-excerpt: 摘要（用于列表展示）
-tags: [标签1, 标签2]
-published: true   # true=发布，false=草稿
----
-```
-
-约束：`slug` 与文件名一致；`published: true` 才出现在列表。
-
----
-
-## 6. TypeScript 规范
-
-- `strict: true`
-- 禁止 `any`，用 `unknown` 代替
-- 函数返回值必须有类型注解
-- 所有组件 Props 必须有类型
-
----
-
-## 7. Git 提交规范
-
-格式：
-
-```
-<type>: <简短描述>
-
-<详细说明>
-```
-
-类型前缀：`feat:` `fix:` `docs:` `refactor:` `style:` `test:` `chore:` `perf:`
-
----
-
-## 8. 构建检查
+## 构建检查
 
 每次 commit 前必须：
 
@@ -167,5 +135,3 @@ npm run build
 ```
 
 **生产代码禁止 `console.log`**
-
----
