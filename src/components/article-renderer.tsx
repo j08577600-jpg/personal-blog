@@ -27,7 +27,7 @@ export default function ArticleRenderer({ post }: ArticleRendererProps) {
         {post.tags.map((tag) => (
           <span
             key={tag}
-            className="inline-flex items-center rounded-full px-2.5 py-1 text-xs bg-accent-subtle text-accent"
+            className="inline-flex items-center rounded-full px-2.5 py-1 text-xs bg-accent-subtle text-accent hover:bg-accent hover:text-white transition-colors duration-150"
           >
             {tag}
           </span>
