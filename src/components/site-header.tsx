@@ -18,9 +18,6 @@ export async function SiteHeader() {
           <Link href="/blog" className="hover:text-black dark:hover:text-white">
             博客
           </Link>
-          <Link href="/tags" className="hover:text-black dark:hover:text-white">
-            标签
-          </Link>
           <Link href="/about" className="hover:text-black dark:hover:text-white">
             关于
           </Link>
