@@ -154,6 +154,46 @@ function buildPostEntry(fileName: string): PostEntry {
 // Public API — safe for public pages
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Tag aggregation
+// ---------------------------------------------------------------------------
+
+export type TagWithCount = {
+  tag: string;
+  count: number;
+};
+
+/**
+ * Returns all unique tags with their post counts (published posts only).
+ * Sorted by count descending, then alphabetically.
+ */
+export function getAllTags(): TagWithCount[] {
+  const posts = getPosts();
+  const counts: Record<string, number> = {};
+
+  for (const post of posts) {
+    for (const tag of post.tags) {
+      counts[tag] = (counts[tag] ?? 0) + 1;
+    }
+  }
+
+  return Object.entries(counts)
+    .map(([tag, count]) => ({ tag, count }))
+    .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
+}
+
+/**
+ * Returns published posts that have the given tag.
+ * Returns empty array if tag doesn't exist or has no posts.
+ */
+export function getPostsByTag(tag: string): Post[] {
+  return getPosts().filter((post) => post.tags.includes(tag));
+}
+
+// ---------------------------------------------------------------------------
+// Public API — safe for public pages
+// ---------------------------------------------------------------------------
+
 /**
  * Returns only valid, published posts sorted by date descending.
  * Used by public blog pages — never surfaces drafts or invalid posts.
