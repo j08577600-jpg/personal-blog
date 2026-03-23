@@ -10,6 +10,11 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  // 白名单检查
+  if ((session.user as any)?.whitelisted === false) {
+    redirect("/unauthorized");
+  }
+
   return (
     <div className="mx-auto max-w-5xl px-6 py-20">
       <div className="max-w-3xl">
@@ -35,8 +40,14 @@ export default async function DashboardPage() {
               <p className="font-medium text-black dark:text-white">{session.user?.email || "未提供"}</p>
             </div>
             <div>
-              <p className="text-black/45 dark:text-white/45">用户 ID</p>
+              <p className="text-black/45 dark:text-white/45">用户 ID（GitHub）</p>
               <p className="break-all font-mono text-xs text-black dark:text-white">{session.user?.id || "未提供"}</p>
+            </div>
+            <div>
+              <p className="text-black/45 dark:text-white/45">白名单状态</p>
+              <p className="font-medium text-black dark:text-white">
+                {(session.user as any)?.whitelisted ? "已授权" : "未授权"}
+              </p>
             </div>
           </div>
         </section>
@@ -44,7 +55,6 @@ export default async function DashboardPage() {
         <aside className="rounded-3xl border border-black/6 bg-white p-8 dark:border-white/10 dark:bg-white/[0.02]">
           <p className="text-sm text-black/50 dark:text-white/50">下一阶段</p>
           <ul className="mt-5 space-y-3 text-sm leading-7 text-black/72 dark:text-white/72">
-            <li>• 接入作者白名单，只允许你本人进入后台</li>
             <li>• 增加文章元数据管理</li>
             <li>• 做本地草稿与发布流程</li>
             <li>• 补文章封面、SEO 与订阅能力</li>
