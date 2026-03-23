@@ -26,7 +26,7 @@
 
 ## 阶段 5：博客扩展 📋
 - 搜索
-- RSS / sitemap
+- RSS / sitemap ✅（`/sitemap.xml` + `/rss.xml`，`force-static` ISR，1h revalidate）
 - 项目页
 - 阅读清单 / 碎片笔记
 - 数据分析
