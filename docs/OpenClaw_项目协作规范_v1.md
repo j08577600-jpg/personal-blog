@@ -112,7 +112,8 @@
 5. **收尾**：更新 DEVELOPMENT_PLAN.md → 向编排者汇报完成
 
 **负责人：**
-- 编排者（Dyna）：全流程负责，生成最终报告
+- `planner-codex`：P6 收口、汇总最终报告、做架构一致性判断
+- 编排者（Dyna）：负责派活、跟踪、协调与对外汇报
 - builder-codex：执行 Git 合并和发布操作
 
 **输出：**
@@ -272,3 +273,4 @@
 | designer-gemini | crs/claude-sonnet-4-6 | .agent/roles/designer-gemini.md |
 
 编排者（Dyna）通过 `sessions_spawn` 派活，各子 agent 在自己的角色定义下工作，工作区共享项目目录。
+na）通过 `sessions_spawn` 派活，各子 agent 在自己的角色定义下工作，工作区共享项目目录。
