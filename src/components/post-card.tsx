@@ -17,12 +17,13 @@ export function PostCard({ post }: { post: Post }) {
       <p className="mb-4 text-sm leading-7 text-black/65 dark:text-white/65">{post.excerpt}</p>
       <div className="flex flex-wrap gap-2">
         {post.tags.map((tag) => (
-          <span
+          <Link
             key={tag}
-            className="rounded-full border border-black/8 px-2.5 py-1 text-xs text-black/55 dark:border-white/10 dark:text-white/55"
+            href={`/blog/tags/${encodeURIComponent(tag)}`}
+            className="rounded-full border border-black/8 px-2.5 py-1 text-xs text-black/55 transition hover:border-black/20 dark:border-white/10 dark:text-white/55 dark:hover:border-white/20"
           >
             {tag}
-          </span>
+          </Link>
         ))}
       </div>
     </article>

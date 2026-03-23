@@ -227,3 +227,29 @@ export function getAllValidPosts(): Post[] {
     .map((e) => e.post as Post)
     .sort((a, b) => (a.date < b.date ? 1 : -1));
 }
+
+// ---------------------------------------------------------------------------
+// Tags API
+// ---------------------------------------------------------------------------
+
+export type TagEntry = {
+  tag: string;
+  count: number;
+};
+
+/**
+ * Returns all unique tags from published posts, with article count.
+ * Sorted by count descending, then alphabetically.
+ */
+export function getAllTags(): TagEntry[] {
+  const posts = getPosts();
+  const counts: Record<string, number> = {};
+  for (const post of posts) {
+    for (const tag of post.tags) {
+      counts[tag] = (counts[tag] ?? 0) + 1;
+    }
+  }
+  return Object.entries(counts)
+    .map(([tag, count]) => ({ tag, count }))
+    .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
+}
