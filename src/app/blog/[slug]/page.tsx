@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { MDXRemote } from "next-mdx-remote/rsc";
 import { getPostBySlug, getPosts } from "@/lib/posts";
 
 export function generateStaticParams() {
@@ -36,11 +37,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         ))}
       </div>
 
-      <div className="space-y-6 text-lg leading-8 text-black/72 dark:text-white/72">
-        {post.content.map((paragraph) => (
-          <p key={paragraph}>{paragraph}</p>
-        ))}
-      </div>
+      <MDXRemote source={post.content} />
     </article>
   );
 }
