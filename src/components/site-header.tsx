@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { HeaderAuthControls } from "@/components/header-auth-controls";
 
 export async function SiteHeader() {
   const session = (await getServerSession(authOptions)) as any;
@@ -20,21 +21,10 @@ export async function SiteHeader() {
           <Link href="/about" className="hover:text-black dark:hover:text-white">
             关于
           </Link>
-          {session?.user ? (
-            <Link
-              href="/api/auth/signout"
-              className="rounded-full border border-black/10 px-3 py-1.5 hover:border-black/20 dark:border-white/15 dark:hover:border-white/30"
-            >
-              退出登录
-            </Link>
-          ) : (
-            <Link
-              href="/login"
-              className="rounded-full border border-black/10 px-3 py-1.5 hover:border-black/20 dark:border-white/15 dark:hover:border-white/30"
-            >
-              GitHub 登录
-            </Link>
-          )}
+          <HeaderAuthControls
+            isLoggedIn={Boolean(session?.user)}
+            userName={session?.user?.name ?? session?.user?.email ?? "作者"}
+          />
         </nav>
       </div>
     </header>
