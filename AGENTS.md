@@ -24,24 +24,44 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ## 角色分工
 
-- `planner-codex`：方案 / 执行计划
+- `planner-codex`：负责方案设计（P1）、执行计划（P2）、最终收口合并（P6）
 - `designer-gemini`：UI / 交互 / 文案（涉及 UI 时先行）
-- `builder-codex`：主开发
+- `builder-codex`：负责实现开发（P3），并在实施过程中更新执行记录，不负责起草 P2
 - `reviewer-codex`：技术主审
-- `reviewer-gemini`：二审 / 补盲
-- `reviewer-minimax`：第三视角审查
+- `reviewer-gemini`：审查
+- `reviewer-minimax`：审查
 - `tester-codex`：测试 / 验收
 
 各角色定义见 `.agent/roles/`。
 
 ## 阶段流转
 
-1. **P1 方案设计** → 输出 `方案设计.md`
-2. **P2 执行计划** → 输出 `执行计划.md`（无 Plan 不进入开发）
-3. **P3 实现开发** → 持续更新 Plan
-4. **P4 交叉审查** → 输出 `审查报告.md`（codex 主审 + gemini 二审 + minimax 三审，**三审并行进行**，不串行等待；未过审不进入测试）
-5. **P5 测试验收** → 输出测试结果（未通过不发布）
-6. **P6 发布合并** → 按 `.agent/workflow/P6_发布合并工作流.md` 总结报告
+1. P1 方案设计
+- 由 `planner-codex` 输出 `方案设计.md`
+
+2. P2 执行计划
+- 由 `planner-codex` 输出 `执行计划.md`
+- 无 Plan 不进入开发
+- `builder-codex` 不负责起草 P2
+
+3. P3 实现开发
+- 由 `builder-codex` 按 P2 执行
+- 可持续更新 Plan 中的进度、决策日志、验证记录
+- 不得擅自改写目标、范围、验收标准；若需变更，必须回到 `planner-codex`
+
+4. P4 交叉审查
+- 输出 `审查报告.md`
+- `reviewer-codex` 主审 + `reviewer-gemini` 二审 + `reviewer-minimax` 三审
+- 三审并行进行，不串行等待
+- 未过审不进入测试
+
+5. P5 测试验收
+- 由 `tester-codex` 输出测试结果
+- 未通过不发布
+
+6. P6 发布合并
+- 由 `planner-codex` 负责最终收口
+- 按 `.agent/workflow/P6_发布合并工作流.md` 总结报告
 
 ## 强约束
 
@@ -62,20 +82,21 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - **中大型任务**：planner → builder → reviewer → tester
 - **涉及 UI 的任务**：designer-gemini → planner-codex → builder-codex
 
-### 多功能并行（模式 A — 阶段级并行）
+## 多功能并行策略
+- 当多个独立功能同时开发时，最多开启 4 路子 agent 并行推进
+- 并行单位 = 不同功能
+- 超过 4 个功能时，其余先排队
 
-多个功能同时开发时，各自走完整 P1→P6 阶段，阶段错开：
-
-```
-功能A：P1 P2 → [P3] → P4 → P5 → P6
-功能B：   P1 P2 → [P3] → P4 → P5 → P6
-功能C：       P1 P2 → [P3] ...
-```
-
-- 每个功能独立 Git 分支
-- 阶段重叠时，不同角色可以同时处理不同功能
-- 合并冲突由 builder-codex 负责解决
-- 共享代码变更时，需通知其他功能 rebase
+### 关键说明
+- “并行”指的是**不同功能并行**，不是同一个功能拆成多个阶段并行
+- 每个功能内部仍按角色流转：
+`planner -> builder -> reviewer -> tester -> planner`
+- 不允许一个子 agent 包办同一功能的完整流程
+- `planner` 负责该功能的计划发起、最终收口、汇总与架构一致性判断
+- `tester` 负责测试验收
+- 无 P1 / P2 文档，不进入该功能的开发阶段
+- 一旦某功能进入阶段流转，在用户未叫停的前提下，编排者必须自动推进到下一角色，不停在 planner 完成后等待额外催促
+- 进度汇报不能替代流程推进；汇报时需明确区分 P1/P2 完成、P3 完成、功能闭环完成
 
 ## 参考文档
 

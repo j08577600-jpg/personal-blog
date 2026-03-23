@@ -85,6 +85,8 @@ UI / 交互方向提案、页面结构、文案、技术二审。
 - `planner` 负责该功能的计划发起、最终收口、汇总与架构一致性判断
 - `tester` 负责测试验收
 - 无 P1 / P2 文档，不进入该功能的开发阶段
+- 一旦某功能进入阶段流转，在用户未叫停的前提下，编排者必须自动推进到下一角色，不停在 planner 完成后等待额外催促
+- 进度汇报不能替代流程推进；汇报时需明确区分 P1/P2 完成、P3 完成、功能闭环完成
 
 ### 中大型任务
 planner → builder → reviewer-codex → reviewer-gemini → reviewer-minimax → tester → planner（收口）
