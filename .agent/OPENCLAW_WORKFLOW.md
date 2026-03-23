@@ -62,7 +62,7 @@ UI / 交互方向提案、页面结构、文案、技术二审。
 主 agent 直接处理（单文件小修改、明确低风险修复、小型配置改动）。
 
 ### 中大型任务
-planner → builder → reviewer-codex → reviewer-gemini → reviewer-minimax → tester
+planner → builder → reviewer-codex → reviewer-gemini → reviewer-minimax → tester → planner（收口）
 
 ### 涉及 UI 的任务
 designer-gemini → planner-codex → builder-codex
