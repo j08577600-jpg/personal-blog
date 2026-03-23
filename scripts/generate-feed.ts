@@ -1,4 +1,3 @@
-#!/usr/bin/env npx tsx
 /**
  * scripts/generate-feed.ts
  *
