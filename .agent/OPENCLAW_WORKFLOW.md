@@ -12,10 +12,12 @@
 
 ## 2. Agents
 
-- `planner-codex`：方案 / Plan 负责人
+- `planner-codex`：负责方案设计（P1）、执行计划（P2）、最终收口合并（P6）
 - `designer-gemini`：UI / 交互 / 文案层
-- `builder-codex`：主开发（前后端一体）
-- `reviewer-codex`（主审）、`reviewer-gemini`（二审）：交叉审查
+- `builder-codex`：负责实现开发（P3），并在实施过程中更新执行记录，不负责起草 P2
+- `reviewer-codex`：技术主审
+- `reviewer-gemini`：二审 / 补盲
+- `reviewer-minimax`：第三视角审查
 - `tester-codex`：测试 / 验收
 
 各角色定义见 `.agent/roles/` 目录。
@@ -24,26 +26,36 @@
 
 ### P1 方案设计
 - 文档：`yyyy-MM-dd_[功能]_方案设计.md`
-- 要求：无方案不进入 Plan
+- 由 `planner-codex` 输出
+- 无方案不进入 Plan
 
 ### P2 执行计划
 - 文档：`yyyy-MM-dd_[功能]_执行计划.md`
-- 要求：无 Plan 不进入开发
+- 由 `planner-codex` 输出
+- 无 Plan 不进入开发
+- `builder-codex` 不负责起草 P2
 
 ### P3 实现开发
 - 输出：代码 + Plan 更新记录
-- 要求：每个停止点必须更新进度、决策日志、验证记录
+- 由 `builder-codex` 按 P2 执行
+- 每个停止点必须更新进度、决策日志、验证记录
+- 不得擅自改写目标、范围、验收标准；若需变更，必须回到 `planner-codex`
 
 ### P4 交叉审查
 - 文档：`yyyy-MM-dd_[功能]_审查报告.md`
-- 要求：未过审不得进入测试
+- `reviewer-codex` 主审 + `reviewer-gemini` 二审 + `reviewer-minimax` 三审
+- 三审并行进行，不串行等待
+- 未过审不得进入测试
 
 ### P5 测试验收
 - 文档：测试计划 + 结果记录
-- 要求：未通过不得发布
+- 由 `tester-codex` 输出测试结果
+- 未通过不得发布
 
 ### P6 发布 / 合并
 - 输出：合并、发布、收尾总结
+- 由 `planner-codex` 负责最终收口
+- 按 `.agent/workflow/P6_发布合并工作流.md` 执行
 
 ## 4. 模型分工
 
@@ -62,11 +74,17 @@ UI / 交互方向提案、页面结构、文案、技术二审。
 主 agent 直接处理（单文件小修改、明确低风险修复、小型配置改动）。
 
 ### 多功能并行策略
-- 当多个独立功能同时开发时，最多开启 4 路子 agent
+- 当多个独立功能同时开发时，最多开启 4 路子 agent 并行推进
 - 并行单位 = 不同功能
 - 超过 4 个功能时，其余先排队
-- tester 负责测试验收
-- planner 负责最终收口
+
+### 关键说明
+- “并行”指的是**不同功能并行**，不是同一个功能拆成多个阶段并行
+- 每个功能内部仍按角色流转：`planner -> builder -> reviewer -> tester -> planner`
+- 不允许一个子 agent 包办同一功能的完整流程
+- `planner` 负责该功能的计划发起、最终收口、汇总与架构一致性判断
+- `tester` 负责测试验收
+- 无 P1 / P2 文档，不进入该功能的开发阶段
 
 ### 中大型任务
 planner → builder → reviewer-codex → reviewer-gemini → reviewer-minimax → tester → planner（收口）
@@ -85,18 +103,15 @@ designer-gemini → planner-codex → builder-codex
 - 无验收标准，不进入实现
 - 未过审，不进入测试
 - 未通过测试，不进入发布
+- `执行计划.md` 的初稿作者只能是 `planner-codex`
+- `builder-codex` 只能更新 P3 实施记录，不得代写 P2
+- 若开发中发现计划失效或范围变化，必须退回 `planner-codex` 重写或修订 Plan
 
 ## 8. 模板位置
 
 - `.agent/templates/方案设计模板.md`
 - `.agent/templates/执行计划模板.md`
 - `.agent/templates/审查报告模板.md`
-- `.agent/templates/测试计划模板.md`
-
-## 9. 任务文档位置
-
-`.agent/tasks/`
-板.md`
 - `.agent/templates/测试计划模板.md`
 
 ## 9. 任务文档位置
