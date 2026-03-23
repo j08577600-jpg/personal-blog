@@ -69,7 +69,7 @@
 **文档：**
 `yyyy-MM-dd_[功能]_审查报告.md`
 
-由编排者负责汇总主审与二审的审查结论。
+主审、二审、三审**并行进行**，由编排者汇总结论。
 
 **输出：**
 - 审查结论
@@ -103,14 +103,22 @@
 
 ### P6 发布 / 合并
 
-**文档：**
-- 汇总所有阶段文档
-- 生成最终报告（如需要可转 PDF）
+详见 `.agent/workflow/P6_发布合并工作流.md`，核心步骤：
+
+1. **收集阶段文档**：确认 P1/P2/P4/P5 文档齐全
+2. **生成最终报告**：汇总所有阶段，输出 `P6_最终报告.md`（可转 PDF）
+3. **Git 合并**：切 main → 拉取 → 合并功能分支 → 推送
+4. **发布**：lint / build → PM2 重启（或对应部署方式）
+5. **收尾**：更新 DEVELOPMENT_PLAN.md → 向编排者汇报完成
+
+**负责人：**
+- 编排者（Dyna）：全流程负责，生成最终报告
+- builder-codex：执行 Git 合并和发布操作
 
 **输出：**
-- 合并
-- 发布
-- 收尾总结
+- `yyyy-MM-dd_[功能]_最终报告.pdf`
+- Git 合并完成
+- 生产环境发布完成
 
 ---
 
@@ -147,6 +155,19 @@
 - 单文件小修改
 - 明确且低风险的修复
 - 不需要复杂上下文的简单任务
+
+### 多功能并行策略
+
+**模式 A（阶段级并行，默认）：**
+多个功能各自走 P1→P6，阶段错开：
+
+```
+功能A：P1 P2 → [P3] → P4 → P5 → P6
+功能B：   P1 P2 → [P3] → P4 → P5 → P6
+功能C：       P1 P2 → [P3] ...
+```
+
+自然并行——Git 分支隔离，阶段重叠时不同功能的 builder/reviewer 可以同时工作。
 
 ### 中大型任务
 
@@ -223,3 +244,31 @@
 - 不提前做完整 CMS
 - 内容系统只认 `content/posts/*.mdx`
 - 优先完成发布链路，再逐步增强后台能力
+
+---
+
+## 8. 模板位置
+
+- `.agent/templates/方案设计模板.md`
+- `.agent/templates/执行计划模板.md`
+- `.agent/templates/审查报告模板.md`
+- `.agent/templates/测试计划模板.md`
+
+## 9. 任务文档位置
+
+`.agent/tasks/`
+
+## 10. Agent 系统
+
+博客项目使用项目级 sub-agent 协作（sessions_spawn 派生子 agent）：
+
+| 角色 | 模型 | 定义位置 |
+|------|------|---------|
+| planner-codex | crs/claude-opus-4-6 | .agent/roles/planner.md |
+| builder-codex | crs/claude-opus-4-6 | .agent/roles/builder.md |
+| reviewer-codex | crs/claude-opus-4-6 | .agent/roles/reviewer-codex.md |
+| reviewer-gemini | crs/claude-sonnet-4-6 | .agent/roles/reviewer-gemini.md |
+| tester-codex | crs/claude-sonnet-4-6 | .agent/roles/tester.md |
+| designer-gemini | crs/claude-sonnet-4-6 | .agent/roles/designer-gemini.md |
+
+编排者（Dyna）通过 `sessions_spawn` 派活，各子 agent 在自己的角色定义下工作，工作区共享项目目录。

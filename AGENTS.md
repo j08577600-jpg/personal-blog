@@ -39,9 +39,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 1. **P1 方案设计** → 输出 `方案设计.md`
 2. **P2 执行计划** → 输出 `执行计划.md`（无 Plan 不进入开发）
 3. **P3 实现开发** → 持续更新 Plan
-4. **P4 交叉审查** → 输出 `审查报告.md`（三审：codex 主审 + gemini 二审 + minimax 三审；未过审不进入测试）
+4. **P4 交叉审查** → 输出 `审查报告.md`（codex 主审 + gemini 二审 + minimax 三审，**三审并行进行**，不串行等待；未过审不进入测试）
 5. **P5 测试验收** → 输出测试结果（未通过不发布）
-6. **P6 发布合并**
+6. **P6 发布合并** → 按 `.agent/workflow/P6_发布合并工作流.md` 总结报告
 
 ## 强约束
 
@@ -61,6 +61,21 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - **小任务**：主 agent 直接处理
 - **中大型任务**：planner → builder → reviewer → tester
 - **涉及 UI 的任务**：designer-gemini → planner-codex → builder-codex
+
+### 多功能并行（模式 A — 阶段级并行）
+
+多个功能同时开发时，各自走完整 P1→P6 阶段，阶段错开：
+
+```
+功能A：P1 P2 → [P3] → P4 → P5 → P6
+功能B：   P1 P2 → [P3] → P4 → P5 → P6
+功能C：       P1 P2 → [P3] ...
+```
+
+- 每个功能独立 Git 分支
+- 阶段重叠时，不同角色可以同时处理不同功能
+- 合并冲突由 builder-codex 负责解决
+- 共享代码变更时，需通知其他功能 rebase
 
 ## 参考文档
 
