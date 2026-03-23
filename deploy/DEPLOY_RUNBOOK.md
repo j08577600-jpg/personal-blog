@@ -43,10 +43,16 @@ sudo systemctl stop personal-blog
 
 ## 发布流程
 
+先做发布前检查：
+
 ```bash
 cd /home/cjl/projects/personal-blog
-npm run lint
-npm run build
+bash scripts/release-check.sh
+```
+
+然后重启服务：
+
+```bash
 sudo systemctl restart personal-blog
 ```
 
