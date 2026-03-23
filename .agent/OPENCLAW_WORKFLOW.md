@@ -61,6 +61,13 @@ UI / 交互方向提案、页面结构、文案、技术二审。
 ### 小任务
 主 agent 直接处理（单文件小修改、明确低风险修复、小型配置改动）。
 
+### 多功能并行策略
+- 当多个独立功能同时开发时，最多开启 4 路子 agent
+- 并行单位 = 不同功能
+- 超过 4 个功能时，其余先排队
+- tester 负责测试验收
+- planner 负责最终收口
+
 ### 中大型任务
 planner → builder → reviewer-codex → reviewer-gemini → reviewer-minimax → tester → planner（收口）
 
