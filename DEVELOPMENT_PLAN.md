@@ -24,9 +24,9 @@
 - 使用正式 TLS 证书 ✅（由 Nginx 配置引用 `certs/` 目录）
 - 加入监控与日志轮转 🔄（`scripts/release-check.sh` 提供基础健康检查）
 
-## 阶段 5：博客扩展 📋
+## 阶段 5：博客扩展 ✅（部分）
 - 搜索
-- RSS / sitemap
+- RSS / sitemap ✅（`feature/sitemap-rss` → `main`，commit `10dd479`）
 - 项目页
 - 阅读清单 / 碎片笔记
 - 数据分析

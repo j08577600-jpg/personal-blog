@@ -48,18 +48,18 @@ export default async function PreviewPage({ params }: Props) {
   }
 
   return (
-    <article className="mx-auto max-w-3xl px-6 py-20">
+    <article className="mx-auto max-w-2xl px-6 py-20">
       {/* Top navigation */}
       <div className="mb-8 flex items-center justify-between">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1 text-sm text-black/45 hover:text-black/80 dark:text-white/45 dark:hover:text-white/80"
+          className="inline-flex items-center gap-1 text-sm text-text-muted hover:text-accent transition-colors duration-150"
         >
           ← 返回控制台
         </Link>
         <Link
           href="/blog"
-          className="inline-flex items-center gap-1 text-sm text-black/45 hover:text-black/80 dark:text-white/45 dark:hover:text-white/80"
+          className="inline-flex items-center gap-1 text-sm text-text-muted hover:text-accent transition-colors duration-150"
         >
           返回博客 →
         </Link>

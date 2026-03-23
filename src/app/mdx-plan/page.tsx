@@ -9,15 +9,17 @@ export const metadata: Metadata = {
 
 export default function MdxPlanPage() {
   return (
-    <div className="mx-auto max-w-3xl px-6 py-20">
-      <p className="mb-6 text-sm uppercase tracking-[0.22em] text-black/38 dark:text-white/38">
-        路线图
-      </p>
-      <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-        下一步，是内容系统。
-      </h1>
+    <div className="mx-auto max-w-2xl px-6 py-20">
+      {/* Title with accent bar */}
+      <div className="relative mb-10 pl-5">
+        <span className="absolute left-0 top-0 bottom-0 w-1 bg-accent rounded-full" />
+        <p className="mb-3 text-sm uppercase tracking-[0.22em] text-text-muted">路线图</p>
+        <h1 className="text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
+          下一步，是内容系统。
+        </h1>
+      </div>
 
-      <div className="mt-10 space-y-6 text-base leading-8 text-black/68 dark:text-white/68">
+      <div className="space-y-6 text-base leading-8 text-text-secondary">
         <p>
           下一次真正有价值的升级，是把当前本地数据迁移到基于 MDX 的文章系统，
           并配合 frontmatter 元信息。这样写作、版本管理和发布会比把文章内容
@@ -28,11 +30,12 @@ export default function MdxPlanPage() {
         </p>
       </div>
 
-      <hr className="my-12 border-black/6 dark:border-white/10" />
+      {/* Gradient divider */}
+      <hr className="my-10 h-px border-0 bg-gradient-to-r from-transparent via-accent to-transparent" />
 
       <div className="space-y-8">
         <section>
-          <p className="mb-4 text-sm uppercase tracking-[0.18em] text-black/38 dark:text-white/38">
+          <p className="mb-4 text-sm uppercase tracking-[0.18em] text-text-muted">
             当前进度
           </p>
           <ul className="space-y-3">
@@ -44,8 +47,8 @@ export default function MdxPlanPage() {
               "文章发布流程文档",
               "全站 SEO 元信息",
             ].map((item) => (
-              <li key={item} className="flex items-center gap-3 text-sm text-black/65 dark:text-white/65">
-                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+              <li key={item} className="flex items-center gap-3 text-sm text-text-secondary">
+                <span className="h-1.5 w-1.5 rounded-full bg-green-500 shrink-0" />
                 {item}
               </li>
             ))}
@@ -53,7 +56,7 @@ export default function MdxPlanPage() {
         </section>
 
         <section>
-          <p className="mb-4 text-sm uppercase tracking-[0.18em] text-black/38 dark:text-white/38">
+          <p className="mb-4 text-sm uppercase tracking-[0.18em] text-text-muted">
             计划中
           </p>
           <ul className="space-y-3">
@@ -63,8 +66,8 @@ export default function MdxPlanPage() {
               "PR 审核流程",
               "作者头像与社交链接",
             ].map((item) => (
-              <li key={item} className="flex items-center gap-3 text-sm text-black/55 dark:text-white/55">
-                <span className="h-1.5 w-1.5 rounded-full bg-black/25 dark:bg-white/25" />
+              <li key={item} className="flex items-center gap-3 text-sm text-text-muted">
+                <span className="h-1 w-1 rounded-full bg-text-muted shrink-0" />
                 {item}
               </li>
             ))}
@@ -75,7 +78,7 @@ export default function MdxPlanPage() {
       <div className="mt-12">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 text-sm font-medium text-black/65 hover:text-black dark:text-white/65 dark:hover:text-white"
+          className="inline-flex items-center gap-2 text-sm text-accent hover:underline transition-colors duration-150"
         >
           ← 查看所有文章
         </Link>

@@ -10,19 +10,22 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="mx-auto max-w-3xl px-6 py-20">
+    <div className="mx-auto max-w-2xl px-6 py-20">
       {/* Page label */}
-      <p className="mb-6 text-sm uppercase tracking-[0.22em] text-black/38 dark:text-white/38">
+      <p className="mb-6 text-sm uppercase tracking-[0.22em] text-text-muted">
         关于
       </p>
 
-      {/* Headline */}
-      <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-        一个为清晰表达而建的个人站点。
-      </h1>
+      {/* Headline with blue accent bar */}
+      <div className="relative mb-10 pl-5">
+        <span className="absolute left-0 top-0 bottom-0 w-1 bg-accent rounded-full" />
+        <h1 className="text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
+          一个为清晰表达而建的个人站点。
+        </h1>
+      </div>
 
       {/* Body */}
-      <div className="mt-10 space-y-6 text-base leading-8 text-black/68 dark:text-white/68">
+      <div className="space-y-6 text-base leading-8 text-text-secondary">
         <p>
           这个博客用来发布技术笔记、项目更新、设计决策，以及那些值得长期保留的思考。
           写作对象是自己，也是对这些问题有过同样困惑的人。
@@ -36,34 +39,64 @@ export default function AboutPage() {
         </p>
       </div>
 
-      {/* Divider */}
-      <hr className="my-12 border-black/6 dark:border-white/10" />
+      {/* Gradient divider */}
+      <hr className="my-10 h-px border-0 bg-gradient-to-r from-transparent via-accent to-transparent" />
 
       {/* Two-column facts */}
       <div className="grid gap-8 sm:grid-cols-2">
         <section>
-          <p className="mb-3 text-sm uppercase tracking-[0.18em] text-black/38 dark:text-white/38">
+          <p className="mb-3 text-sm uppercase tracking-[0.18em] text-text-muted">
             技术栈
           </p>
-          <ul className="space-y-2 text-sm text-black/65 dark:text-white/65">
-            <li>Next.js 16 + App Router</li>
-            <li>TypeScript（严格模式）</li>
-            <li>Tailwind CSS</li>
-            <li>MDX（文件驱动内容）</li>
-            <li>NextAuth v4（GitHub 登录）</li>
-            <li>Nginx + systemd 部署</li>
+          <ul className="space-y-2 text-sm text-text-secondary">
+            <li className="flex items-center gap-2">
+              <span className="h-1 w-1 rounded-full bg-accent shrink-0" />
+              Next.js 16 + App Router
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="h-1 w-1 rounded-full bg-accent shrink-0" />
+              TypeScript（严格模式）
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="h-1 w-1 rounded-full bg-accent shrink-0" />
+              Tailwind CSS
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="h-1 w-1 rounded-full bg-accent shrink-0" />
+              MDX（文件驱动内容）
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="h-1 w-1 rounded-full bg-accent shrink-0" />
+              NextAuth v4（GitHub 登录）
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="h-1 w-1 rounded-full bg-accent shrink-0" />
+              Nginx + systemd 部署
+            </li>
           </ul>
         </section>
 
         <section>
-          <p className="mb-3 text-sm uppercase tracking-[0.18em] text-black/38 dark:text-white/38">
+          <p className="mb-3 text-sm uppercase tracking-[0.18em] text-text-muted">
             内容方向
           </p>
-          <ul className="space-y-2 text-sm text-black/65 dark:text-white/65">
-            <li>工程实践与架构决策</li>
-            <li>Agent 工作流与边界探索</li>
-            <li>基础设施与部署自动化</li>
-            <li>项目推进中的关键判断</li>
+          <ul className="space-y-2 text-sm text-text-secondary">
+            <li className="flex items-center gap-2">
+              <span className="h-1 w-1 rounded-full bg-accent shrink-0" />
+              工程实践与架构决策
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="h-1 w-1 rounded-full bg-accent shrink-0" />
+              Agent 工作流与边界探索
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="h-1 w-1 rounded-full bg-accent shrink-0" />
+              基础设施与部署自动化
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="h-1 w-1 rounded-full bg-accent shrink-0" />
+              项目推进中的关键判断
+            </li>
           </ul>
         </section>
       </div>
@@ -72,9 +105,9 @@ export default function AboutPage() {
       <div className="mt-12">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 text-sm font-medium text-black/65 hover:text-black dark:text-white/65 dark:hover:text-white"
+          className="inline-flex items-center gap-2 text-sm text-accent hover:underline transition-colors duration-150"
         >
-          ← 查看所有文章
+          ← 返回博客
         </Link>
       </div>
     </div>
