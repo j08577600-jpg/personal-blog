@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { MDXRemote } from "next-mdx-remote/rsc";
 import { getPostBySlug, getPosts } from "@/lib/posts";
 import { siteConfig } from "@/lib/site";
+import ArticleRenderer from "@/components/article-renderer";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -55,34 +55,13 @@ export default async function PostPage({ params }: Props) {
 
   return (
     <article className="mx-auto max-w-3xl px-6 py-20">
-      <div className="mb-8">
-        <Link
-          href="/blog"
-          className="mb-6 inline-block text-sm text-black/45 hover:text-black/80 dark:text-white/45 dark:hover:text-white/80"
-        >
-          ← 返回博客
-        </Link>
-        <p className="mb-4 text-sm uppercase tracking-[0.22em] text-black/38 dark:text-white/38">文章</p>
-        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">{post.title}</h1>
-        <div className="mt-5 flex flex-wrap gap-3 text-sm text-black/45 dark:text-white/45">
-          <span>{post.date}</span>
-          <span>•</span>
-          <span>{post.readingTime}</span>
-        </div>
-      </div>
-
-      <div className="mb-10 flex flex-wrap gap-2">
-        {post.tags.map((tag) => (
-          <span
-            key={tag}
-            className="rounded-full border border-black/8 px-2.5 py-1 text-xs text-black/55 dark:border-white/10 dark:text-white/55"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-
-      <MDXRemote source={post.content} />
+      <Link
+        href="/blog"
+        className="mb-6 inline-block text-sm text-black/45 hover:text-black/80 dark:text-white/45 dark:hover:text-white/80"
+      >
+        ← 返回博客
+      </Link>
+      <ArticleRenderer post={post} />
     </article>
   );
 }
