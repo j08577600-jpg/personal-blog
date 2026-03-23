@@ -56,6 +56,42 @@ function getPostPaths(): SitemapPath[] {
     .filter((p): p is SitemapPath => p !== null);
 }
 
+/** Extract unique tags from published posts for sitemap inclusion */
+function getTagPaths(): SitemapPath[] {
+  const postsDir = path.join(process.cwd(), "content/posts");
+  let files: string[] = [];
+  try {
+    files = fs.readdirSync(postsDir);
+  } catch {
+    return [];
+  }
+
+  const tagSet = new Set<string>();
+  for (const fileName of files) {
+    if (!fileName.endsWith(".mdx") && !fileName.endsWith(".md")) continue;
+    const fullPath = path.join(postsDir, fileName);
+    const raw = fs.readFileSync(fullPath, "utf8");
+    const { data } = matter(raw);
+    if (!data.published || !data.slug || !data.title || !data.date || !data.excerpt) continue;
+    const tags: string[] = Array.isArray(data.tags) ? data.tags : [];
+    for (const tag of tags) {
+      tagSet.add(String(tag));
+    }
+  }
+
+  const now = new Date().toISOString();
+  const tagPaths: SitemapPath[] = [{ loc: `${siteUrl}/blog/tags`, changefreq: "weekly", priority: 0.7, lastmod: now }];
+  for (const tag of tagSet) {
+    tagPaths.push({
+      loc: `${siteUrl}/blog/tags/${encodeURIComponent(tag)}`,
+      changefreq: "weekly",
+      priority: 0.6,
+      lastmod: now,
+    });
+  }
+  return tagPaths;
+}
+
 const config: IConfig = {
   siteUrl,
   outDir: "./public",
@@ -72,7 +108,8 @@ const config: IConfig = {
       { loc: `${siteUrl}/blog`, changefreq: "daily", priority: 0.9, lastmod: new Date().toISOString() },
       { loc: `${siteUrl}/about`, changefreq: "monthly", priority: 0.5, lastmod: new Date().toISOString() },
     ];
-    return [...staticPaths, ...postPaths];
+    const tagPaths = getTagPaths();
+    return [...staticPaths, ...tagPaths, ...postPaths];
   },
 };
 
