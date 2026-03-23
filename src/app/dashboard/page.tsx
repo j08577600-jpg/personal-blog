@@ -244,7 +244,14 @@ function PostRow({
               </Link>
             )}
             {status === "draft" && (
-              <span className="text-xs text-amber-500">草稿</span>
+              <>
+                <Link
+                  href={`/dashboard/preview/${post.slug}`}
+                  className="text-xs text-blue-600 hover:underline dark:text-blue-400"
+                >
+                  预览 →
+                </Link>
+              </>
             )}
           </div>
         </div>
