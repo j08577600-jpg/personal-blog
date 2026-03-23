@@ -54,10 +54,10 @@ export default async function PostPage({ params }: Props) {
   }
 
   return (
-    <article className="mx-auto max-w-3xl px-6 py-20">
+    <article className="mx-auto max-w-2xl px-6 py-20">
       <Link
         href="/blog"
-        className="mb-6 inline-block text-sm text-black/45 hover:text-black/80 dark:text-white/45 dark:hover:text-white/80"
+        className="mb-8 inline-block text-sm text-accent hover:underline transition-colors duration-150"
       >
         ← 返回博客
       </Link>
