@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { GitHubSignInButton } from "@/components/github-signin-button";
 
 export default function LoginPage() {
   return (
@@ -10,12 +10,7 @@ export default function LoginPage() {
           第一版会把认证保持得足够轻。GitHub 作为首个登录提供方，后续会扩展为作者私有写作、草稿和发布能力。
         </p>
 
-        <Link
-          href="/api/auth/signin/github?callbackUrl=/dashboard"
-          className="mt-8 inline-block rounded-full bg-black px-5 py-3 text-sm font-medium text-white transition hover:opacity-90 dark:bg-white dark:text-black"
-        >
-          使用 GitHub 登录
-        </Link>
+        <GitHubSignInButton />
       </div>
     </div>
   );
