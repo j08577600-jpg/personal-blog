@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import type { Post } from "@/lib/posts";
 
@@ -25,12 +26,13 @@ export default function ArticleRenderer({ post }: ArticleRendererProps) {
       {/* Tags (above date) */}
       <div className="mb-4 flex flex-wrap gap-2">
         {post.tags.map((tag) => (
-          <span
+          <Link
             key={tag}
+            href={`/blog/tags/${encodeURIComponent(tag)}`}
             className="inline-flex items-center rounded-full px-2.5 py-1 text-xs bg-accent-subtle text-accent hover:bg-accent hover:text-white transition-colors duration-150"
           >
             {tag}
-          </span>
+          </Link>
         ))}
       </div>
 
