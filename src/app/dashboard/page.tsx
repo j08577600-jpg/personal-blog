@@ -243,7 +243,7 @@ function PostRow({
                 查看 →
               </Link>
             )}
-            {status === "draft" && post && (
+            {status === "draft" && (
               <Link
                 href={`/dashboard/preview/${post.slug}`}
                 className="text-xs text-amber-600 hover:underline dark:text-amber-400"

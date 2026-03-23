@@ -20,18 +20,28 @@ export default function TagsPage() {
       {tags.length === 0 ? (
         <p className="py-12 text-center text-sm text-black/45 dark:text-white/45">暂无标签。</p>
       ) : (
-        <div className="flex flex-wrap gap-3">
-          {tags.map(({ tag, count }) => (
+        <>
+          <div className="flex flex-wrap gap-3">
+            {tags.map(({ tag, count }) => (
+              <Link
+                key={tag}
+                href={`/blog/tags/${encodeURIComponent(tag)}`}
+                className="flex items-center gap-2 rounded-full border border-black/8 bg-white px-4 py-2 text-sm text-black/65 transition hover:border-black/20 dark:border-white/10 dark:bg-white/[0.02] dark:text-white/65 dark:hover:border-white/20"
+              >
+                <span>{tag}</span>
+                <span className="text-xs text-black/35 dark:text-white/35">({count})</span>
+              </Link>
+            ))}
+          </div>
+          <div className="mt-12">
             <Link
-              key={tag}
-              href={`/blog/tags/${encodeURIComponent(tag)}`}
-              className="flex items-center gap-2 rounded-full border border-black/8 bg-white px-4 py-2 text-sm text-black/65 transition hover:border-black/20 dark:border-white/10 dark:bg-white/[0.02] dark:text-white/65 dark:hover:border-white/20"
+              href="/blog"
+              className="inline-flex items-center gap-2 text-sm font-medium text-black/55 hover:text-black dark:text-white/55 dark:hover:text-white"
             >
-              <span>{tag}</span>
-              <span className="text-xs text-black/35 dark:text-white/35">({count})</span>
+              ← 返回博客
             </Link>
-          ))}
-        </div>
+          </div>
+        </>
       )}
     </div>
   );
