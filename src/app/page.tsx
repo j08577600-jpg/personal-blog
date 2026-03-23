@@ -1,6 +1,17 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { PostCard } from "@/components/post-card";
 import { getPosts } from "@/lib/posts";
+
+
+export const metadata: Metadata = {
+  title: "首页",
+  description:
+    "极简技术博客。记录工程实践、项目进展、Agent 工作流，以及更认真地思考问题。",
+  alternates: {
+    canonical: "/",
+  },
+};
 
 export default function Home() {
   const posts = getPosts().slice(0, 3);

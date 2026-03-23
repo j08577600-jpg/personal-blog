@@ -1,5 +1,14 @@
+import type { Metadata } from "next";
 import { PostCard } from "@/components/post-card";
 import { getPosts } from "@/lib/posts";
+
+export const metadata: Metadata = {
+  title: "博客",
+  description: "所有文章。记录工程实践、项目进展和值得长期保留的思考。",
+  alternates: {
+    canonical: "/blog",
+  },
+};
 
 export default function BlogPage() {
   const posts = getPosts();
