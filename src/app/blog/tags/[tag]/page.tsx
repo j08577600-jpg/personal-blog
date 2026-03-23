@@ -17,15 +17,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { tag } = await params;
   const decodedTag = decodeURIComponent(tag);
   const allTags = getAllTags();
-  if (!allTags.find((t) => t.tag === decodedTag)) {
+  const tagEntry = allTags.find((t) => t.tag === decodedTag);
+  if (!tagEntry) {
     return { title: "标签未找到" };
   }
-  const posts = getPosts().filter((p) => p.tags.includes(decodedTag));
   const url = `${siteConfig.siteUrl}/blog/tags/${encodeURIComponent(tag)}`;
 
   return {
     title: `标签：${decodedTag}`,
-    description: `浏览所有带有「${decodedTag}」标签的文章，共 ${posts.length} 篇。`,
+    description: `浏览所有带有「${decodedTag}」标签的文章，共 ${tagEntry.count} 篇。`,
     alternates: { canonical: url },
   };
 }
