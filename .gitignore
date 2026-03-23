@@ -43,3 +43,7 @@ certs/*.key
 certs/*.pem
 .env.local
 .env.example
+
+# Generated at build time
+public/sitemap.xml
+public/feed.xml
