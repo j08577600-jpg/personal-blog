@@ -53,13 +53,16 @@
 ### Gemini
 UI / 交互方向提案、页面结构、文案、技术二审。
 
+### MiniMax
+第三视角审查、安全与风险判断、中文表达与逻辑审查。
+
 ## 5. 任务编排策略
 
 ### 小任务
 主 agent 直接处理（单文件小修改、明确低风险修复、小型配置改动）。
 
 ### 中大型任务
-planner → builder → reviewers → tester
+planner → builder → reviewer-codex → reviewer-gemini → reviewer-minimax → tester
 
 ### 涉及 UI 的任务
 designer-gemini → planner-codex → builder-codex
@@ -81,6 +84,12 @@ designer-gemini → planner-codex → builder-codex
 - `.agent/templates/方案设计模板.md`
 - `.agent/templates/执行计划模板.md`
 - `.agent/templates/审查报告模板.md`
+- `.agent/templates/测试计划模板.md`
+
+## 9. 任务文档位置
+
+`.agent/tasks/`
+板.md`
 - `.agent/templates/测试计划模板.md`
 
 ## 9. 任务文档位置
