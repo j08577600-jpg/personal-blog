@@ -1,0 +1,44 @@
+[
+  {
+    "slug": "zaoqi-boke-jiegou-biji",
+    "title": "早期博客架构的一些笔记",
+    "excerpt": "第一版最好的状态，不是功能齐全，而是尽快可上线，同时还给第二版留下足够空间。",
+    "tags": [
+      "架构",
+      "Next.js",
+      "博客"
+    ],
+    "date": "2026-03-12"
+  },
+  {
+    "slug": "weishenme-jijian-jiemian-geng-naikan",
+    "title": "为什么极简界面通常更耐看",
+    "excerpt": "个人网站最重要的不是装饰，而是让阅读毫不费力。真正的视觉自信，往往来自克制。",
+    "tags": [
+      "设计",
+      "界面",
+      "写作"
+    ],
+    "date": "2026-03-18"
+  },
+  {
+    "slug": "agent-gongzuoliu-yu-bianjie",
+    "title": "Agent 工作流的价值，不在于放飞，而在于边界",
+    "excerpt": "Agent 开发真正有价值的地方，不是自动化表演，而是把规划、范围控制和审查纳入稳定流程。",
+    "tags": [
+      "Agent",
+      "工作流",
+      "工程"
+    ],
+    "date": "2026-03-22"
+  },
+  {
+    "slug": "bad-invalid-example",
+    "title": "这篇缺少 excerpt",
+    "excerpt": "",
+    "tags": [
+      "测试"
+    ],
+    "date": "2026-03-23"
+  }
+]
