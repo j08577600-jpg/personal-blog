@@ -35,7 +35,6 @@
 
 本角色在以下情况下被激活：
 - builder-codex 已完成开发
-- 已通过 reviewer-gemini 二审
 
 ## 审查范围
 
