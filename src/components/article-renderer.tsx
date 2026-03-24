@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import type { Post } from "@/lib/posts";
 
@@ -15,34 +16,51 @@ export default function ArticleRenderer({ post }: ArticleRendererProps) {
   return (
     <>
       {/* Header */}
-      <div className="mb-8">
-        <p className="mb-4 text-sm uppercase tracking-[0.22em] text-black/38 dark:text-white/38">
-          文章
-        </p>
-        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+      <div className="mb-6">
+        <h1 className="text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
           {post.title}
         </h1>
-        <div className="mt-5 flex flex-wrap gap-3 text-sm text-black/45 dark:text-white/45">
-          <span>{post.date}</span>
-          <span>•</span>
-          <span>{post.readingTime}</span>
-        </div>
+        <div className="mt-5 mb-8 h-px bg-border" />
       </div>
 
-      {/* Tags */}
-      <div className="mb-10 flex flex-wrap gap-2">
+      {/* Tags (above date) */}
+      <div className="mb-4 flex flex-wrap gap-2">
         {post.tags.map((tag) => (
-          <span
+          <Link
             key={tag}
-            className="rounded-full border border-black/8 px-2.5 py-1 text-xs text-black/55 dark:border-white/10 dark:text-white/55"
+            href={`/blog/tags/${encodeURIComponent(tag)}`}
+            className="inline-flex items-center rounded-full px-2.5 py-1 text-xs bg-accent-subtle text-accent hover:bg-accent hover:text-white transition-colors duration-150"
           >
             {tag}
-          </span>
+          </Link>
         ))}
       </div>
 
-      {/* Body */}
-      <MDXRemote source={post.content} />
+      {/* Date + reading time */}
+      <div className="mb-10 flex flex-wrap items-center gap-3 text-sm text-text-muted">
+        <span>{post.date}</span>
+        <span>·</span>
+        <span>{post.readingTime} 分钟阅读</span>
+      </div>
+
+      {/* Body — use @tailwindcss/typography prose */}
+      <div className="prose prose-lg dark:prose-invert max-w-none
+        prose-headings:text-text-primary
+        prose-p:text-text-secondary
+        prose-a:text-accent prose-a:no-underline hover:prose-a:underline
+        prose-code:text-accent prose-code:bg-accent-subtle prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:font-normal
+        prose-pre:bg-slate-900 dark:prose-pre:bg-slate-800 prose-pre:rounded-xl prose-pre:p-5
+        prose-blockquote:border-l-4 prose-blockquote:border-accent prose-blockquote:bg-accent-subtle/50 prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r prose-blockquote:not-italic
+        prose-strong:text-text-primary
+        prose-li:text-text-secondary
+        prose-hr:border-border
+        prose-img:rounded-xl
+        prose-table:text-text-secondary
+        prose-th:text-text-primary
+        prose-em:text-text-secondary
+      ">
+        <MDXRemote source={post.content} />
+      </div>
     </>
   );
 }

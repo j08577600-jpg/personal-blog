@@ -1,24 +1,55 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
-:root {
-  --background: #f7f7f5;
-  --foreground: #111111;
-}
+/* ============================================================
+   Blue-White Minimalist Theme — Phase 0
+   ============================================================ */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+@theme {
+  /* ── Light Mode ───────────────────────────────────── */
+  --color-bg-primary: #f8fafc;
+  --color-bg-surface: #ffffff;
+  --color-bg-subtle: #f1f5f9;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94a3b8;
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-accent-subtle: #eff6ff;
+  --color-border: #e2e8f0;
+
+  /* ── Dark Mode ────────────────────────────────────── */
+  --color-dark-bg-primary: #0c1222;
+  --color-dark-bg-surface: #111827;
+  --color-dark-bg-subtle: #1e293b;
+  --color-dark-text-primary: #f1f5f9;
+  --color-dark-text-secondary: #94a3b8;
+  --color-dark-text-muted: #64748b;
+  --color-dark-accent: #60a5fa;
+  --color-dark-accent-hover: #93c5fd;
+  --color-dark-accent-subtle: #1e3a5f;
+  --color-dark-border: #1e293b;
+
+  /* ── Typography ──────────────────────────────────── */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #090909;
-    --foreground: #f3f3f3;
-  }
+/* ── Dark Mode Override ─────────────────────────────────── */
+.dark {
+  --color-bg-primary: var(--color-dark-bg-primary);
+  --color-bg-surface: var(--color-dark-bg-surface);
+  --color-bg-subtle: var(--color-dark-bg-subtle);
+  --color-text-primary: var(--color-dark-text-primary);
+  --color-text-secondary: var(--color-dark-text-secondary);
+  --color-text-muted: var(--color-dark-text-muted);
+  --color-accent: var(--color-dark-accent);
+  --color-accent-hover: var(--color-dark-accent-hover);
+  --color-accent-subtle: var(--color-dark-accent-subtle);
+  --color-border: var(--color-dark-border);
 }
 
+/* ── Base Reset ─────────────────────────────────────────── */
 * {
   box-sizing: border-box;
 }
@@ -28,11 +59,13 @@ html {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
+/* ── Selection ──────────────────────────────────────────── */
 ::selection {
-  background: rgba(17, 17, 17, 0.12);
+  background: rgba(37, 99, 235, 0.15);
+  color: var(--color-text-primary);
 }
