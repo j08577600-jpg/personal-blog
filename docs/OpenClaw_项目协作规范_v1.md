@@ -270,16 +270,24 @@
 
 ## 10. Agent 系统
 
-博客项目使用项目级 sub-agent 协作（sessions_spawn 派生子 agent）：
+博客项目使用项目级 sub-agent 协作（sessions_spawn 派生子 agent）。
+
+角色名 -> 模型映射的唯一真源为：`.agent/config/role-models.json`
 
 | 角色 | 模型 | 定义位置 |
 |------|------|---------|
-| planner-codex | crs/claude-opus-4-6 | .agent/roles/planner.md |
-| builder-codex | crs/claude-opus-4-6 | .agent/roles/builder.md |
-| reviewer-codex | crs/claude-opus-4-6 | .agent/roles/reviewer-codex.md |
-| reviewer-gemini | crs/claude-sonnet-4-6 | .agent/roles/reviewer-gemini.md |
-| tester-codex | crs/claude-sonnet-4-6 | .agent/roles/tester.md |
-| designer-gemini | crs/claude-sonnet-4-6 | .agent/roles/designer-gemini.md |
+| planner-codex | crs-openai/gpt-5.4 | .agent/roles/planner.md |
+| builder-codex | crs-openai/gpt-5.4 | .agent/roles/builder.md |
+| reviewer-codex | crs-openai/gpt-5.4 | .agent/roles/reviewer-codex.md |
+| tester-codex | crs-openai/gpt-5.4 | .agent/roles/tester.md |
+| designer-gemini | google/gemini-3.1-pro-preview | .agent/roles/designer-gemini.md |
+| reviewer-gemini | google/gemini-3.1-pro-preview | .agent/roles/reviewer-gemini.md |
+| reviewer-minimax | minimax-portal/MiniMax-M2.5-highspeed | .agent/roles/reviewer-minimax.md |
 
-编排者（Dyna）通过 `sessions_spawn` 派活，各子 agent 在自己的角色定义下工作，工作区共享项目目录。
-na）通过 `sessions_spawn` 派活，各子 agent 在自己的角色定义下工作，工作区共享项目目录。
+编排者（Dyna）通过 `sessions_spawn` 派活时，必须遵守以下规则：
+- 先按角色名查 `.agent/config/role-models.json`
+- `sessions_spawn` 必须显式传入 `model`
+- 禁止绕过角色映射直接手写模型，除非用户明确批准临时例外
+- 若角色未命中映射，必须报错并停止，不允许静默回退默认模型
+
+各子 agent 在自己的角色定义下工作，工作区共享项目目录。

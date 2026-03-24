@@ -22,6 +22,24 @@
 
 各角色定义见 `.agent/roles/` 目录。
 
+## 2.1 角色名 -> 模型映射（唯一真源）
+
+映射文件：`.agent/config/role-models.json`
+
+- `planner-codex` -> `crs-openai/gpt-5.4`
+- `builder-codex` -> `crs-openai/gpt-5.4`
+- `reviewer-codex` -> `crs-openai/gpt-5.4`
+- `tester-codex` -> `crs-openai/gpt-5.4`
+- `designer-gemini` -> `google/gemini-3.1-pro-preview`
+- `reviewer-gemini` -> `google/gemini-3.1-pro-preview`
+- `reviewer-minimax` -> `minimax-portal/MiniMax-M2.5-highspeed`
+
+编排规则：
+- 生成 sub-agent 时，必须先按角色名查 `.agent/config/role-models.json`
+- `sessions_spawn` 时必须显式传入 `model`
+- 禁止在任务文档、临时脚本或口头约定中绕过查表直接写模型
+- 若角色未命中映射，必须报错并停止，不允许静默回退默认模型
+
 ## 3. Phases
 
 ### P1 方案设计

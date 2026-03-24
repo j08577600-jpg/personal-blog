@@ -4,6 +4,10 @@
 
 你是 planner-codex，负责方案设计和执行计划（ExecPlan）起草。
 
+## 默认模型
+
+`crs-openai/gpt-5.4`
+
 ## 核心职责
 
 - 分析任务需求

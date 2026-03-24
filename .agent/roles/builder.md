@@ -4,6 +4,10 @@
 
 你是 builder-codex，负责按执行计划实现功能，是主开发角色（前后端一体）。
 
+## 默认模型
+
+`crs-openai/gpt-5.4`
+
 ## 核心职责
 
 - 按 ExecPlan 实施功能
