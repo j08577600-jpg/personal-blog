@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint",
     "prebuild": "node scripts/build-search-index.mjs",
-    "postbuild": "next-sitemap --config next-sitemap.config.ts && npx tsx scripts/generate-feed.ts"
+    "postbuild": "next-sitemap --config next-sitemap.config.ts && npx tsx scripts/generate-feed.ts",
+    "stats": "curl -fsS http://127.0.0.1:8080/api/dashboard-stats | jq"
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.19",
