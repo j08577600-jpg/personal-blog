@@ -8,95 +8,15 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 # OpenClaw 协作规范
 
-## 触发规则：什么时候必须走 Plan
+## OpenClaw 项目协作规范
 
-必须走 ExecPlan 的情况：
-- 跨 2 个及以上文件
-- 涉及页面 + 数据 + 交互任意两项
-- 涉及认证、发布、SEO、内容结构、UI 改版、重构、测试补齐
-- 预计超过 30 分钟的任务
+完整规范见：`.agent/OPENCLAW_WORKFLOW.md`
 
-可直接处理的小任务：
-- 单文件文案改动
-- 样式微调
-- 明确的小 bug
-- 小型配置改动
-
-## 角色分工
-
-- `planner-codex`：负责方案设计（P1）、执行计划（P2）、最终收口合并（P6）
-- `designer-gemini`：UI / 交互 / 文案（涉及 UI 时先行）
-- `builder-codex`：负责实现开发（P3），并在实施过程中更新执行记录，不负责起草 P2
-- `reviewer-codex`：技术主审
-- `reviewer-gemini`：审查
-- `reviewer-minimax`：审查
-- `tester-codex`：测试 / 验收
-
-各角色定义见 `.agent/roles/`。
-
-## 阶段流转
-
-1. P1 方案设计
-- 由 `planner-codex` 输出 `方案设计.md`
-
-2. P2 执行计划
-- 由 `planner-codex` 输出 `执行计划.md`
-- 无 Plan 不进入开发
-- `builder-codex` 不负责起草 P2
-
-3. P3 实现开发
-- 由 `builder-codex` 按 P2 执行
-- 可持续更新 Plan 中的进度、决策日志、验证记录
-- 不得擅自改写目标、范围、验收标准；若需变更，必须回到 `planner-codex`
-
-4. P4 交叉审查
-- 输出 `审查报告.md`
-- `reviewer-codex` 主审 + `reviewer-gemini` 二审 + `reviewer-minimax` 三审
-- 三审并行进行，不串行等待
-- 未过审不进入测试
-
-5. P5 测试验收
-- 由 `tester-codex` 输出测试结果
-- 未通过不发布
-
-6. P6 发布合并
-- 由 `planner-codex` 负责最终收口
-- 按 `.agent/workflow/P6_发布合并工作流.md` 总结报告
-
-## 强约束
-
-- 无验收标准，不进入实现
-- 未过审，不进入测试
-- 未通过测试，不进入发布
-- 实施过程中必须持续更新 Plan
-
-## 模型分工
-
-- **Codex**：方案设计、Plan 编写、编码实现、Bug 修复、技术主审、测试、最终落地
-- **Gemini**：UI / 交互方向提案、页面结构、文案、技术二审
-- **MiniMax**：第三视角审查、安全与风险判断、中文表达与逻辑审查
-
-## 任务编排策略
-
-- **小任务**：主 agent 直接处理
-- **中大型任务**：planner → builder → reviewer → tester
-- **涉及 UI 的任务**：designer-gemini → planner-codex → builder-codex
-
-## 多功能并行策略
-- 当多个独立功能同时开发时，最多开启 4 路子 agent 并行推进
-- 并行单位 = 不同功能
-- 超过 4 个功能时，其余先排队
-
-### 关键说明
-- “并行”指的是**不同功能并行**，不是同一个功能拆成多个阶段并行
-- 每个功能内部仍按角色流转：
-`planner -> builder -> reviewer -> tester -> planner`
-- 不允许一个子 agent 包办同一功能的完整流程
-- `planner` 负责该功能的计划发起、最终收口、汇总与架构一致性判断
-- `tester` 负责测试验收
-- 无 P1 / P2 文档，不进入该功能的开发阶段
-- 一旦某功能进入阶段流转，在用户未叫停的前提下，编排者必须自动推进下一角色，直至最后阶段P6收束完成。
-- 开发过程中必须做心跳汇报：阶段转换、失败、开发完成、测试完成、收口完成等关键节点都要汇报；若某阶段结束后尚未自动进入下一阶段，编排者必须立刻补上，不能停住。
+规范要点：
+- 阶段流转：P1 → P2 → P3 → P4 → P5 → P6
+- 无 Plan 不开发，无审查通过不测试，无测试通过不发布
+- 回流规则：P4/P5 发现严重问题时回流 P1/P2 重做
+- 规范源：`.agent/OPENCLAW_WORKFLOW.md`（唯一权威）
 
 ## 参考文档
 
@@ -106,7 +26,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ---
 
-# 项目规范 — 博客 (personal-blog)
+# 项目规范 - 博客 (personal-blog)
 
 ## 技术栈
 
