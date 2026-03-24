@@ -14,7 +14,7 @@ export function SiteFooter() {
           </Link>
           <div className="flex gap-4 text-text-muted text-sm">
             <a
-              href="https://github.com/jay"
+              href="https://github.com/j08577600-jpg"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-accent transition-colors duration-150"

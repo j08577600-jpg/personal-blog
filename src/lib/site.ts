@@ -19,7 +19,7 @@ export const siteConfig = {
   /** Primary author */
   author: {
     name: "jay",
-    github: "https://github.com/jay",
+    github: "https://github.com/j08577600-jpg",
   },
 
   navigation: [
