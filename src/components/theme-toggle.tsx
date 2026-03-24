@@ -1,27 +1,22 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
-
-function getSnapshot() {
-  return document.documentElement.classList.contains("dark");
-}
-
-function subscribe() {
-  // Noop — we only read on toggle
-  return () => {};
-}
+import { useState } from "react";
 
 export function ThemeToggle() {
-  const isDark = useSyncExternalStore(subscribe, getSnapshot, () => false);
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof document === "undefined") {
+      return false;
+    }
+
+    return document.documentElement.classList.contains("dark");
+  });
 
   function toggle() {
-    if (isDark) {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    } else {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    }
+    const nextIsDark = !isDark;
+
+    document.documentElement.classList.toggle("dark", nextIsDark);
+    localStorage.setItem("theme", nextIsDark ? "dark" : "light");
+    setIsDark(nextIsDark);
   }
 
   return (
