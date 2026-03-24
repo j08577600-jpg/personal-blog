@@ -26,6 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const url = `${siteConfig.siteUrl}/projects/${project.slug}`;
+  const displayTags = (project.tech && project.tech.length > 0) ? project.tech : project.tags;
 
   return {
     title: project.title,
@@ -39,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: project.excerpt,
       publishedTime: project.date,
       authors: [siteConfig.author.name],
-      tags: project.tags,
+      tags: displayTags,
     },
     twitter: {
       card: "summary",
@@ -114,7 +115,7 @@ export default async function ProjectPage({ params }: Props) {
     notFound();
   }
 
-  const displayTags = project.tech && project.tech.length > 0 ? project.tech : project.tags;
+  const displayTags = (project.tech && project.tech.length > 0) ? project.tech : project.tags;
 
   return (
     <article className="mx-auto max-w-2xl px-6 py-20">
