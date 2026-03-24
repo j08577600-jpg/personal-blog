@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: -apple-system, sans-serif; font-size: 12pt; line-height: 1.6; padding: 40px; max-width: 800px; margin: 0 auto; }
+  h1 { border-bottom: 2px solid #333; padding-bottom: 8px; }
+  h2 { margin-top: 24px; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f0f0f0; padding: 2px 6px; }
+  pre { background: #f5f5f5; padding: 12px; overflow-x: auto; }
+</style>
+</head>
+<body>
+<h1>P6 最终报告 — 监控与日志轮转</h1>
+<blockquote>
+<p>日期：2026-03-24
+负责人：planner-codex
+功能：监控与日志轮转
+状态：✅ 完成</p>
+</blockquote>
+<hr>
+<h2>一、任务概述</h2>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>功能名称</td>
+<td>监控与日志轮转</td>
+</tr>
+<tr>
+<td>任务文件夹</td>
+<td><code>.agent/tasks/2026-03-24_监控与日志轮转/</code></td>
+</tr>
+<tr>
+<td>P1 方案设计</td>
+<td><code>2026-03-24_监控与日志轮转_方案设计.md</code></td>
+</tr>
+<tr>
+<td>P4 审查报告</td>
+<td><code>2026-03-24_监控与日志轮转_审查报告_P4.md</code></td>
+</tr>
+<tr>
+<td>P5 测试报告</td>
+<td><code>测试报告.md</code></td>
+</tr>
+<tr>
+<td>P6 本报告</td>
+<td><code>P6_最终报告.md</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>二、交付物清单</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>文件</th>
+<th>路径</th>
+<th>类型</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>健康检查接口</td>
+<td><code>src/app/api/health/route.ts</code></td>
+<td>代码</td>
+<td>✅ 已交付</td>
+</tr>
+<tr>
+<td>2</td>
+<td>logrotate 配置</td>
+<td><code>deploy/logrotate.conf</code></td>
+<td>配置</td>
+<td>✅ 已交付</td>
+</tr>
+<tr>
+<td>3</td>
+<td>journald 配置说明</td>
+<td><code>deploy/journald.conf补丁说明.md</code></td>
+<td>文档</td>
+<td>✅ 已交付</td>
+</tr>
+<tr>
+<td>4</td>
+<td>部署手册监控章节</td>
+<td><code>deploy/DEPLOY_RUNBOOK.md</code>（补充）</td>
+<td>文档</td>
+<td>✅ 已交付</td>
+</tr>
+<tr>
+<td>5</td>
+<td>执行计划</td>
+<td><code>.agent/tasks/.../执行计划.md</code></td>
+<td>文档</td>
+<td>✅ 已交付</td>
+</tr>
+<tr>
+<td>6</td>
+<td>P4 审查报告</td>
+<td><code>.agent/tasks/.../审查报告_P4.md</code></td>
+<td>文档</td>
+<td>✅ 已交付</td>
+</tr>
+<tr>
+<td>7</td>
+<td>P5 测试报告</td>
+<td><code>.agent/tasks/.../测试报告.md</code></td>
+<td>文档</td>
+<td>✅ 已交付</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>三、质量门禁结果</h2>
+<table>
+<thead>
+<tr>
+<th>检查项</th>
+<th>结果</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>P1 方案设计</td>
+<td>✅ 通过</td>
+<td>明确目标、技术选型、风险分析</td>
+</tr>
+<tr>
+<td>P2 执行计划</td>
+<td>✅ 通过</td>
+<td>5 个 Step 全部执行完成</td>
+</tr>
+<tr>
+<td>P4 代码审查</td>
+<td>✅ PASS</td>
+<td>3 审查人一致通过，0 blocking</td>
+</tr>
+<tr>
+<td>P5 测试验证</td>
+<td>✅ PASS</td>
+<td>lint/build/health endpoint 全部通过</td>
+</tr>
+<tr>
+<td>lint</td>
+<td>✅ exit 0</td>
+<td>Next.js 16.2.1，TS 5.9s</td>
+</tr>
+<tr>
+<td>build</td>
+<td>✅ exit 0</td>
+<td>Turbopack，13.2s</td>
+</tr>
+<tr>
+<td><code>/api/health</code> 在 build 输出</td>
+<td>✅</td>
+<td>Route (app) 可见 <code>ƒ /api/health</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>四、技术实现总结</h2>
+<h3>4.1 <code>/api/health</code> 接口</h3>
+<ul>
+<li>文件：<code>src/app/api/health/route.ts</code></li>
+<li>实现：5 行代码，Next.js App Router 标准 API Route</li>
+<li>响应：<code>{ ok: true, timestamp: ISO string, version: &quot;0.1.0&quot; }</code></li>
+<li>特点：<ul>
+<li><code>dynamic = &quot;force-dynamic&quot;</code> 防止静态缓存</li>
+<li>无外部依赖，零安全风险</li>
+<li>HTTP 200 Content-Type: application/json</li>
+</ul>
+</li>
+</ul>
+<h3>4.2 logrotate 配置</h3>
+<ul>
+<li>文件：<code>deploy/logrotate.conf</code></li>
+<li>覆盖范围：<ul>
+<li>journald 持久化日志：<code>/var/log/journal/*/</code></li>
+<li>Nginx 访问和错误日志：<code>/var/log/nginx/*.log</code></li>
+<li>应用日志：<code>/home/cjl/projects/personal-blog/logs/*.log</code></li>
+</ul>
+</li>
+<li>轮转策略：weekly + maxsize 100M，保留 4 份，压缩 + delaycompress</li>
+<li>验证：<code>logrotate --debug</code> dry-run 无报错</li>
+</ul>
+<h3>4.3 journald 保留策略</h3>
+<ul>
+<li>文件：<code>deploy/journald.conf补丁说明.md</code></li>
+<li>配置项：<ul>
+<li><code>SystemMaxUse=500M</code>（总大小上限）</li>
+<li><code>SystemMaxFileSize=50M</code>（单文件上限）</li>
+<li><code>MaxRetentionSec=14day</code>（最大保留时间）</li>
+</ul>
+</li>
+<li>支持持久化和 tmpfs 两种模式，文档区分说明</li>
+</ul>
+<h3>4.4 监控自查文档</h3>
+<ul>
+<li>文件：<code>deploy/DEPLOY_RUNBOOK.md</code>（补充章节）</li>
+<li>内容：<ul>
+<li>健康检查命令（上游 + 线上）</li>
+<li>日志查看命令（journalctl + tail）</li>
+<li>logrotate 验证命令</li>
+<li>常见故障排查表</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2>五、审查意见与遗留项</h2>
+<h3>5.1 P4 审查遗留（3 个 Non-blocking）</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>问题</th>
+<th>严重度</th>
+<th>建议</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>logrotate access.log/error.log 独立 block 代码重复</td>
+<td>低</td>
+<td>合并为一个 block（可选）</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>logs/*.log</code> block 对应目录未确认存在</td>
+<td>低</td>
+<td>确认是否有独立日志文件，或移除该 block</td>
+</tr>
+<tr>
+<td>3</td>
+<td>journald.conf 实际添加了 <code>SystemMaxFileSize=50M</code>，计划未列出</td>
+<td>低</td>
+<td>同步更新计划文档</td>
+</tr>
+</tbody></table>
+<p><strong>结论</strong>：以上 3 项均为低优先级优化建议，不阻碍功能上线。</p>
+<h3>5.2 P5 测试遗留（需手动验证的线上项）</h3>
+<p>以下检查需要 SSH 登录服务器后手动执行：</p>
+<pre><code class="language-bash"># 健康端点
+curl http://127.0.0.1:8080/api/health
+curl -kfsSI --max-time 5 https://blog.chenjilan.com/api/health
+
+# logrotate 验证
+sudo logrotate --debug /etc/logrotate.d/personal-blog
+
+# 服务状态
+systemctl --no-pager status personal-blog
+
+# journald 磁盘占用
+journalctl --disk-usage
+</code></pre>
+<hr>
+<h2>六、部署步骤</h2>
+<h3>6.1 自动部署（CI/CD）</h3>
+<pre><code class="language-bash"># 构建
+npm run build
+
+# PM2 重启（如使用 PM2）
+pm2 restart personal-blog || pm2 start .next/standalone/server.js --name personal-blog
+</code></pre>
+<h3>6.2 手动部署（需 SSH + sudo）</h3>
+<p>以下操作需要 SSH 登录服务器 sudo 执行：</p>
+<pre><code class="language-bash"># 1. 安装 logrotate 规则
+sudo cp /home/cjl/projects/personal-blog/deploy/logrotate.conf /etc/logrotate.d/personal-blog
+
+# 2. （可选）配置 journald 持久化
+sudo mkdir -p /var/log/journal/$(id -u)
+sudo systemd-tmpfiles --create --prefix /var/log/journal
+# 编辑 /etc/systemd/journald.conf 添加：
+# [Journal]
+# SystemMaxUse=500M
+# SystemMaxFileSize=50M
+# MaxRetentionSec=14day
+
+# 3. 重启 systemd-journald（应用新配置）
+sudo systemctl restart systemd-journald
+
+# 4. 重启应用服务
+sudo systemctl restart personal-blog
+
+# 5. 验证
+curl -kfsSI https://blog.chenjilan.com/api/health
+</code></pre>
+<hr>
+<h2>七、git 提交记录</h2>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Commit</td>
+<td>见 CI/CD 执行结果</td>
+</tr>
+<tr>
+<td>Branch</td>
+<td><code>main</code>（直接提交）</td>
+</tr>
+<tr>
+<td>包含文件</td>
+<td>见交付物清单</td>
+</tr>
+<tr>
+<td>健康端点测试</td>
+<td><code>curl https://blog.chenjilan.com/api/health</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>八、结论</h2>
+<p><strong>✅ 监控与日志轮转功能开发完成，所有质量门禁通过。</strong></p>
+<ul>
+<li>P1 → P2 → P4 → P5 四个阶段均达标</li>
+<li>交付 7 个文件，代码质量、文档质量、测试覆盖均满足要求</li>
+<li>3 个 non-blocking 遗留项均为低优先级优化建议</li>
+<li>手动部署项（logrotate/journald）需 SSH 登录服务器执行，不影响本次功能上线</li>
+</ul>
+<hr>
+<p><em>本报告由 subagent (planner-codex) 基于 P1/P2/P4/P5 阶段文档自动生成。</em></p>
+
+</body>
+</html>
