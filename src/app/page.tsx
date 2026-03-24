@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PostCard } from "@/components/post-card";
 import { getPosts } from "@/lib/posts";
-
+import { getRecentNotes } from "@/lib/notes";
 
 export const metadata: Metadata = {
   title: "首页",
@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   const posts = getPosts().slice(0, 3);
+  const recentNotes = getRecentNotes(3);
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-20">
@@ -75,15 +76,55 @@ export default function Home() {
         </div>
 
         {/* Aside */}
-        <aside className="h-fit rounded-xl bg-bg-subtle p-6 shadow-sm">
-          <p className="mb-2 text-sm uppercase tracking-[0.22em] text-text-muted">
-            站点定位
-          </p>
-          <h3 className="mb-4 text-lg font-semibold tracking-tight text-text-primary">这个博客用来做什么</h3>
-          <div className="space-y-4 text-sm leading-7 text-text-secondary">
-            <p>记录软件开发、Agent 工作流、基础设施决策，以及项目推进中的关键判断。</p>
-            <p>第一版会故意保持克制，先把发布链路跑通，再逐步增加更重的内容系统和作者能力。</p>
-            <p>GitHub 登录已经接入，后面会逐步扩展为更完整的私有写作与发布流程。</p>
+        <aside className="h-fit space-y-8">
+          {/* Notes */}
+          {recentNotes.length > 0 && (
+            <div className="rounded-xl bg-bg-subtle p-6 shadow-sm">
+              <div className="mb-4 flex items-end justify-between gap-4">
+                <div>
+                  <p className="mb-1 text-sm uppercase tracking-[0.22em] text-text-muted">
+                    碎片笔记
+                  </p>
+                  <h3 className="text-base font-semibold tracking-tight text-text-primary">
+                    最新 {recentNotes.length} 条
+                  </h3>
+                </div>
+                <Link
+                  href="/notes"
+                  className="text-xs text-text-muted hover:text-accent transition-colors duration-150"
+                >
+                  查看全部
+                </Link>
+              </div>
+              <div className="space-y-3">
+                {recentNotes.map((note) => (
+                  <div key={note.slug} className="group">
+                    <Link
+                      href={`/notes/${note.slug}`}
+                      className="block text-sm font-medium leading-snug text-text-primary group-hover:text-accent transition-colors duration-150"
+                    >
+                      {note.title}
+                    </Link>
+                    <span className="text-xs text-text-muted">{note.date}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Static about */}
+          <div className="rounded-xl bg-bg-subtle p-6 shadow-sm">
+            <p className="mb-2 text-sm uppercase tracking-[0.22em] text-text-muted">
+              站点定位
+            </p>
+            <h3 className="mb-4 text-lg font-semibold tracking-tight text-text-primary">
+              这个博客用来做什么
+            </h3>
+            <div className="space-y-4 text-sm leading-7 text-text-secondary">
+              <p>记录软件开发、Agent 工作流、基础设施决策，以及项目推进中的关键判断。</p>
+              <p>第一版会故意保持克制，先把发布链路跑通，再逐步增加更重的内容系统和作者能力。</p>
+              <p>GitHub 登录已经接入，后面会逐步扩展为更完整的私有写作与发布流程。</p>
+            </div>
           </div>
         </aside>
       </section>

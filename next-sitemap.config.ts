@@ -92,6 +92,88 @@ function getTagPaths(): SitemapPath[] {
   return tagPaths;
 }
 
+/** Read reading-list slugs for sitemap inclusion */
+function getReadingListPaths(): SitemapPath[] {
+  const dir = path.join(process.cwd(), "content/reading-list");
+  let files: string[] = [];
+  try {
+    files = fs.readdirSync(dir);
+  } catch {
+    return [];
+  }
+
+  const now = new Date().toISOString();
+  const listPath: SitemapPath = {
+    loc: `${siteUrl}/reading-list`,
+    lastmod: now,
+    priority: 0.7,
+    changefreq: "weekly",
+  };
+
+  const itemPaths = files
+    .filter((f) => f.endsWith(".mdx") || f.endsWith(".md"))
+    .map((fileName) => {
+      const fullPath = path.join(dir, fileName);
+      const raw = fs.readFileSync(fullPath, "utf8");
+      const { data } = matter(raw);
+      if (!data.published || !data.slug) return null;
+      const slug = String(data.slug);
+      const lastmod = data.date
+        ? new Date(String(data.date) + "T00:00:00.000Z").toISOString()
+        : now;
+      return {
+        loc: `${siteUrl}/reading-list/${slug}`,
+        lastmod,
+        priority: 0.6,
+        changefreq: "monthly",
+      };
+    })
+    .filter((p): p is SitemapPath => p !== null);
+
+  return [listPath, ...itemPaths];
+}
+
+/** Read notes slugs for sitemap inclusion */
+function getNotePaths(): SitemapPath[] {
+  const dir = path.join(process.cwd(), "content/notes");
+  let files: string[] = [];
+  try {
+    files = fs.readdirSync(dir);
+  } catch {
+    return [];
+  }
+
+  const now = new Date().toISOString();
+  const listPath: SitemapPath = {
+    loc: `${siteUrl}/notes`,
+    lastmod: now,
+    priority: 0.7,
+    changefreq: "weekly",
+  };
+
+  const itemPaths = files
+    .filter((f) => f.endsWith(".mdx") || f.endsWith(".md"))
+    .map((fileName) => {
+      const fullPath = path.join(dir, fileName);
+      const raw = fs.readFileSync(fullPath, "utf8");
+      const { data } = matter(raw);
+      if (!data.published || !data.slug) return null;
+      const slug = String(data.slug);
+      const lastmod = data.date
+        ? new Date(String(data.date) + "T00:00:00.000Z").toISOString()
+        : now;
+      return {
+        loc: `${siteUrl}/notes/${slug}`,
+        lastmod,
+        priority: 0.6,
+        changefreq: "monthly",
+      };
+    })
+    .filter((p): p is SitemapPath => p !== null);
+
+  return [listPath, ...itemPaths];
+}
+
 const config: IConfig = {
   siteUrl,
   outDir: "./public",
@@ -103,13 +185,15 @@ const config: IConfig = {
   exclude: ["/admin", "/admin/*"],
   additionalPaths: async () => {
     const postPaths = getPostPaths();
+    const readingListPaths = getReadingListPaths();
+    const notePaths = getNotePaths();
     const staticPaths: SitemapPath[] = [
       { loc: siteUrl, changefreq: "daily", priority: 1.0, lastmod: new Date().toISOString() },
       { loc: `${siteUrl}/blog`, changefreq: "daily", priority: 0.9, lastmod: new Date().toISOString() },
       { loc: `${siteUrl}/about`, changefreq: "monthly", priority: 0.5, lastmod: new Date().toISOString() },
     ];
     const tagPaths = getTagPaths();
-    return [...staticPaths, ...tagPaths, ...postPaths];
+    return [...staticPaths, ...tagPaths, ...postPaths, ...readingListPaths, ...notePaths];
   },
 };
 
