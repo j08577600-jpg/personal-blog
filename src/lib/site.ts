@@ -24,6 +24,7 @@ export const siteConfig = {
 
   navigation: [
     { href: "/blog", label: "博客" },
+    { href: "/projects", label: "项目" },
     { href: "/blog/tags", label: "标签" },
     { href: "/about", label: "关于" },
   ],
