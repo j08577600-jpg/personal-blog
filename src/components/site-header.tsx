@@ -30,9 +30,10 @@ export async function SiteHeader() {
           </Link>
           <Link
             href="/search"
-            className="inline-flex items-center gap-1.5 text-text-secondary hover:text-accent transition-colors duration-150 relative group py-0.5"
+            className="text-text-secondary hover:text-accent transition-colors duration-150 relative group py-0.5"
             aria-label="搜索"
           >
+            <span className="sr-only">搜索</span>
             <svg
               className="h-4 w-4"
               fill="none"
@@ -47,8 +48,6 @@ export async function SiteHeader() {
                 d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"
               />
             </svg>
-            <span>搜索</span>
-            <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-accent transition-all duration-200 group-hover:w-full rounded-full" />
           </Link>
           <Link
             href="/about"
