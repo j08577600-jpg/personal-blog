@@ -32,7 +32,7 @@
 ## 适用场景
 
 本角色在以下情况下被激活：
-- reviewer-codex 审查完成后
+- reviewer-codex 和 reviewer-gemini 审查完成后
 - 作为交叉审查的最后一道关卡
 
 ## 审查范围

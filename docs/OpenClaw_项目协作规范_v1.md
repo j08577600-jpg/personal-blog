@@ -17,7 +17,7 @@
 - `planner-codex`：方案 / Plan 负责人
 - `designer-gemini`：UI / 交互 / 文案层
 - `builder-codex`：主开发（前后端一体）
-- `reviewer-codex`（主审）、`reviewer-minimax`（补盲审查）：交叉审查
+- `reviewer-codex`（主审）、`reviewer-gemini`（二审）：交叉审查
 - `tester-codex`：测试 / 验收
 
 ---
@@ -184,7 +184,7 @@
 
 1. `planner-codex` 出 Plan
 2. `builder-codex` 实现
-3. `reviewer-codex`、`reviewer-minimax` 审核
+3. `reviewer-codex`、`reviewer-gemini` 审核
 4. `tester-codex` 验收
 5. `planner-codex` 负责最终收口、汇总与架构一致性判断
 

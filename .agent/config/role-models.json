@@ -4,5 +4,6 @@
   "reviewer-codex": "crs-openai/gpt-5.4",
   "tester-codex": "crs-openai/gpt-5.4",
   "designer-gemini": "google/gemini-3.1-pro-preview",
+  "reviewer-gemini": "google/gemini-3.1-pro-preview",
   "reviewer-minimax": "minimax-portal/MiniMax-M2.5-highspeed"
 }

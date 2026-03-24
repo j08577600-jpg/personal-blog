@@ -16,7 +16,8 @@
 - `designer-gemini`：UI / 交互 / 文案层
 - `builder-codex`：负责实现开发（P3），并在实施过程中更新执行记录，不负责起草 P2
 - `reviewer-codex`：技术主审
-- `reviewer-minimax`：补盲审查
+- `reviewer-gemini`：二审 / 补盲
+- `reviewer-minimax`：第三视角审查
 - `tester-codex`：测试 / 验收
 
 各角色定义见 `.agent/roles/` 目录。
@@ -60,8 +61,8 @@
 
 ### P4 交叉审查
 - 文档：`yyyy-MM-dd_[功能]_审查报告.md`
-- `reviewer-codex` 主审 + `reviewer-minimax` 补盲审查
-- 双审并行进行，不串行等待
+- `reviewer-codex` 主审 + `reviewer-gemini` 二审 + `reviewer-minimax` 三审
+- 三审并行进行，不串行等待
 - 未过审不得进入测试
 
 ### P5 测试验收
@@ -153,7 +154,7 @@ UI / 交互方向提案、页面结构、文案、技术二审。
 - 进度汇报不能替代流程推进；汇报时需明确区分 P1/P2 完成、P3 完成、功能闭环完成
 
 ### 中大型任务
-planner → builder → reviewer-codex + reviewer-minimax → tester → planner（收口）
+planner → builder → reviewer-codex → reviewer-gemini → reviewer-minimax → tester → planner（收口）
 
 ### 涉及 UI 的任务
 designer-gemini → planner-codex → builder-codex
