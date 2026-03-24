@@ -78,3 +78,52 @@ journalctl -u personal-blog -n 100 --no-pager
 systemctl status nginx --no-pager -l
 sudo tail -n 100 /var/log/nginx/error.log
 ```
+
+## 监控与日志
+
+### 健康检查
+
+```bash
+# 上游健康（自动）
+curl -fsSI --max-time 5 http://127.0.0.1:8080/api/health
+
+# 线上健康（自动）
+curl -kfsSI --max-time 5 https://blog.chenjilan.com/api/health
+```
+
+健康端点返回 `{ "ok": true, "timestamp": "...", "version": "0.1.0" }` 时视为正常。
+
+### 日志查看
+
+```bash
+# Next.js 应用日志（最近 200 行）
+journalctl -u personal-blog -n 200 --no-pager
+
+# 实时跟踪
+journalctl -u personal-blog -f --no-pager
+
+# Nginx 错误日志
+sudo tail -n 100 /var/log/nginx/error.log
+
+# 日志磁盘占用
+journalctl --disk-usage
+du -sh /var/log/journal/ 2>/dev/null || echo "journal tmpfs mode"
+```
+
+### 日志轮转验证
+
+```bash
+# 手动触发 logrotate dry-run
+sudo logrotate --debug /etc/logrotate.d/personal-blog
+
+# 检查 logrotate cron 是否存在
+ls /etc/cron.daily/logrotate 2>/dev/null && echo "OK" || echo "NOT FOUND"
+```
+
+### 常见故障
+
+| 现象 | 检查项 |
+|------|--------|
+| 健康检查 500 | `journalctl -u personal-blog -n 50 --no-pager` |
+| 磁盘满 | `journalctl --disk-usage`；`du -sh /var/log/*` |
+| Nginx 502 | 见「故障排查」章节 |
