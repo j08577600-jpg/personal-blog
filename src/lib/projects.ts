@@ -2,6 +2,12 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import readingTime from "reading-time";
+import {
+  buildExcerpt,
+  isPublishedContent,
+  normalizeTags,
+  type SharedContentMeta,
+} from "@/lib/content";
 
 // ---------------------------------------------------------------------------
 // Project type
@@ -24,6 +30,13 @@ export type Project = {
     demo?: string;
   };
   tech?: string[];
+};
+
+export type PublicProjectMeta = SharedContentMeta & {
+  type: "project";
+  tech: string[];
+  status?: Project["status"];
+  featured: boolean;
 };
 
 // ---------------------------------------------------------------------------
@@ -79,6 +92,8 @@ function parseProject(fileName: string): ParsedProject | null {
     }
 
     const rt = readingTime(content);
+    const tags = normalizeTags(rawData.tags);
+    const tech = normalizeTags(rawData.tech);
 
     const project: Project = {
       slug,
@@ -86,12 +101,12 @@ function parseProject(fileName: string): ParsedProject | null {
       excerpt,
       date,
       readingTime: rt.text,
-      tags: (rawData.tags as string[]) ?? [],
-      published: (rawData.published as boolean) ?? false,
+      tags,
+      published: isPublishedContent(rawData.published as boolean | undefined),
       status: rawData.status as Project["status"],
-      featured: rawData.featured as boolean | undefined,
+      featured: (rawData.featured as boolean) ?? false,
       links: rawData.links as Project["links"],
-      tech: (rawData.tech as string[]) ?? rawData.tags as string[] | undefined,
+      tech: tech.length > 0 ? tech : tags,
       content,
     };
 
@@ -99,6 +114,30 @@ function parseProject(fileName: string): ParsedProject | null {
   } catch {
     return null;
   }
+}
+
+function findProjectBySlug(slug: string, options?: { includeDrafts?: boolean }): Project | null {
+  try {
+    const fileNames = fs.readdirSync(PROJECTS_DIR);
+    for (const fileName of fileNames) {
+      if (!fileName.endsWith(".mdx") && !fileName.endsWith(".md")) continue;
+      const parsed = parseProject(fileName);
+      if (!parsed || parsed.project.slug !== slug) continue;
+      if (!options?.includeDrafts && !parsed.project.published) continue;
+      return parsed.project;
+    }
+  } catch {}
+
+  return null;
+}
+
+function compareProjectsByFeaturedAndDate(
+  a: { featured?: boolean; date: string },
+  b: { featured?: boolean; date: string }
+): number {
+  if (a.featured && !b.featured) return -1;
+  if (!a.featured && b.featured) return 1;
+  return a.date < b.date ? 1 : -1;
 }
 
 // ---------------------------------------------------------------------------
@@ -116,13 +155,7 @@ export function getProjects(): Project[] {
       .map((f) => parseProject(f))
       .filter((r): r is ParsedProject => r !== null && r.project.published)
       .map((r) => r.project)
-      .sort((a, b) => {
-        // featured first
-        if (a.featured && !b.featured) return -1;
-        if (!a.featured && b.featured) return 1;
-        // then by date desc
-        return a.date < b.date ? 1 : -1;
-      });
+      .sort(compareProjectsByFeaturedAndDate);
   } catch {
     return [];
   }
@@ -132,15 +165,11 @@ export function getProjects(): Project[] {
  * Returns a single project by slug. Returns null if not found or not published.
  */
 export function getProjectBySlug(slug: string): Project | null {
-  try {
-    const fileNames = fs.readdirSync(PROJECTS_DIR);
-    for (const fileName of fileNames) {
-      if (!fileName.endsWith(".mdx") && !fileName.endsWith(".md")) continue;
-      const parsed = parseProject(fileName);
-      if (parsed && parsed.project.slug === slug) return parsed.project;
-    }
-  } catch {}
-  return null;
+  return findProjectBySlug(slug);
+}
+
+export function getProjectBySlugForAuthor(slug: string): Project | null {
+  return findProjectBySlug(slug, { includeDrafts: true });
 }
 
 /**
@@ -148,6 +177,23 @@ export function getProjectBySlug(slug: string): Project | null {
  */
 export function getFeaturedProjects(): Project[] {
   return getProjects().filter((p) => p.featured);
+}
+
+export function getPublicProjectsMeta(): PublicProjectMeta[] {
+  return getProjects()
+    .map((project) => ({
+      type: "project" as const,
+      slug: project.slug,
+      title: project.title,
+      excerpt: buildExcerpt(project.content, project.excerpt),
+      date: project.date,
+      tags: project.tech?.length ? project.tech : project.tags,
+      published: project.published,
+      tech: project.tech?.length ? project.tech : project.tags,
+      status: project.status,
+      featured: Boolean(project.featured),
+    }))
+    .sort(compareProjectsByFeaturedAndDate);
 }
 
 /**
@@ -166,6 +212,35 @@ export function getAllProjectTags(): TagEntry[] {
       counts[tag] = (counts[tag] ?? 0) + 1;
     }
   }
+  return Object.entries(counts)
+    .map(([tag, count]) => ({ tag, count }))
+    .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
+}
+
+export function getAllProjects(): Project[] {
+  try {
+    const fileNames = fs.readdirSync(PROJECTS_DIR);
+    return fileNames
+      .filter((f) => f.endsWith(".mdx") || f.endsWith(".md"))
+      .map((f) => parseProject(f))
+      .filter((r): r is ParsedProject => r !== null)
+      .map((r) => r.project)
+      .sort(compareProjectsByFeaturedAndDate);
+  } catch {
+    return [];
+  }
+}
+
+export function getAllProjectTagsForPublicMeta(): TagEntry[] {
+  const projects = getPublicProjectsMeta();
+  const counts: Record<string, number> = {};
+
+  for (const project of projects) {
+    for (const tag of project.tags) {
+      counts[tag] = (counts[tag] ?? 0) + 1;
+    }
+  }
+
   return Object.entries(counts)
     .map(([tag, count]) => ({ tag, count }))
     .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));

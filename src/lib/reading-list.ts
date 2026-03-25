@@ -2,6 +2,13 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import readingTime from "reading-time";
+import {
+  buildExcerpt,
+  isPublishedContent,
+  normalizeTags,
+  sortByDateDesc,
+  type SharedContentMeta,
+} from "@/lib/content";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -29,6 +36,15 @@ export type ReadingItem = {
   content: string;
   published: boolean;
   readingTime: string;
+};
+
+export type PublicReadingMeta = SharedContentMeta & {
+  type: "reading";
+  readingType: ReadingItemType;
+  status: ReadingItemStatus;
+  author?: string;
+  source?: string;
+  rating?: number;
 };
 
 // ---------------------------------------------------------------------------
@@ -108,14 +124,32 @@ function parseReadingItem(fileName: string): ReadingItem | null {
       url: data.url as string | undefined,
       status,
       rating: data.rating as number | undefined,
-      tags: (data.tags as string[]) ?? [],
+      tags: normalizeTags(data.tags),
       content,
-      published: (data.published as boolean) ?? false,
+      published: isPublishedContent(data.published as boolean | undefined),
       readingTime: rt.text,
     };
   } catch {
     return null;
   }
+}
+
+function findReadingItemBySlug(
+  slug: string,
+  options?: { includeDrafts?: boolean }
+): ReadingItem | null {
+  try {
+    const fileNames = fs.readdirSync(READING_LIST_DIR);
+    for (const fileName of fileNames) {
+      if (!fileName.endsWith(".mdx") && !fileName.endsWith(".md")) continue;
+      const item = parseReadingItem(fileName);
+      if (!item || item.slug !== slug) continue;
+      if (!options?.includeDrafts && !item.published) continue;
+      return item;
+    }
+  } catch {}
+
+  return null;
 }
 
 // ---------------------------------------------------------------------------
@@ -135,10 +169,12 @@ export type ReadingListGroup = {
 export function getReadingList(): ReadingListGroup[] {
   try {
     const fileNames = fs.readdirSync(READING_LIST_DIR);
-    const allItems = fileNames
-      .filter((f) => f.endsWith(".mdx") || f.endsWith(".md"))
-      .map(parseReadingItem)
-      .filter((r): r is ReadingItem => r !== null && r.published);
+    const allItems = sortByDateDesc(
+      fileNames
+        .filter((f) => f.endsWith(".mdx") || f.endsWith(".md"))
+        .map(parseReadingItem)
+        .filter((r): r is ReadingItem => r !== null && r.published)
+    );
 
     const groups: Record<ReadingItemStatus, ReadingItem[]> = {
       "want-to-read": [],
@@ -154,9 +190,7 @@ export function getReadingList(): ReadingListGroup[] {
     return READING_STATUS_ORDER.map((status) => ({
       status,
       label: READING_STATUS_LABELS[status],
-      items: groups[status].sort((a, b) =>
-        a.date < b.date ? 1 : -1
-      ),
+      items: groups[status],
     })).filter((g) => g.items.length > 0);
   } catch {
     return [];
@@ -167,15 +201,11 @@ export function getReadingList(): ReadingListGroup[] {
  * Returns a single reading item by slug, or null if not found/not published.
  */
 export function getReadingItemBySlug(slug: string): ReadingItem | null {
-  try {
-    const fileNames = fs.readdirSync(READING_LIST_DIR);
-    for (const fileName of fileNames) {
-      if (!fileName.endsWith(".mdx") && !fileName.endsWith(".md")) continue;
-      const item = parseReadingItem(fileName);
-      if (item && item.slug === slug) return item;
-    }
-  } catch {}
-  return null;
+  return findReadingItemBySlug(slug);
+}
+
+export function getReadingItemBySlugForAuthor(slug: string): ReadingItem | null {
+  return findReadingItemBySlug(slug, { includeDrafts: true });
 }
 
 /**
@@ -192,6 +222,27 @@ export function getAllReadingItemSlugs(): string[] {
   } catch {
     return [];
   }
+}
+
+export function getPublicReadingItemsMeta(): PublicReadingMeta[] {
+  return sortByDateDesc(
+    getReadingList().flatMap((group) =>
+      group.items.map((item) => ({
+        type: "reading" as const,
+        slug: item.slug,
+        title: item.title,
+        excerpt: buildExcerpt(item.content, `${item.author ?? item.source ?? ""} ${READING_TYPE_LABELS[item.type]} · ${READING_STATUS_LABELS[item.status]}`.trim()),
+        date: item.date,
+        tags: item.tags,
+        published: item.published,
+        readingType: item.type,
+        status: item.status,
+        author: item.author,
+        source: item.source,
+        rating: item.rating,
+      }))
+    )
+  );
 }
 
 // ---------------------------------------------------------------------------
