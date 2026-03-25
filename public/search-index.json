@@ -1,28 +1,25 @@
 [
   {
-    "slug": "zaoqi-boke-jiegou-biji",
-    "title": "早期博客架构的一些笔记",
-    "excerpt": "第一版最好的状态，不是功能齐全，而是尽快可上线，同时还给第二版留下足够空间。",
+    "type": "project",
+    "slug": "personal-blog",
+    "href": "/projects/personal-blog",
+    "title": "Personal Blog",
+    "excerpt": "基于 Next.js 16 的极简技术博客，支持 MDX、标签聚合、站点地图和 RSS。",
     "tags": [
-      "架构",
-      "Next.js",
-      "博客"
+      "Next.js 16",
+      "TypeScript",
+      "MDX",
+      "Tailwind CSS 4",
+      "NextAuth v4"
     ],
-    "date": "2026-03-12"
+    "date": "2026-03-24",
+    "section": "项目",
+    "searchText": "personal blog 基于 next.js 16 的极简技术博客，支持 mdx、标签聚合、站点地图和 rss。 next.js typescript mdx tailwind next.js 16 tailwind css 4 nextauth v4 active"
   },
   {
-    "slug": "weishenme-jijian-jiemian-geng-naikan",
-    "title": "为什么极简界面通常更耐看",
-    "excerpt": "个人网站最重要的不是装饰，而是让阅读毫不费力。真正的视觉自信，往往来自克制。",
-    "tags": [
-      "设计",
-      "界面",
-      "写作"
-    ],
-    "date": "2026-03-18"
-  },
-  {
+    "type": "post",
     "slug": "agent-gongzuoliu-yu-bianjie",
+    "href": "/blog/agent-gongzuoliu-yu-bianjie",
     "title": "Agent 工作流的价值，不在于放飞，而在于边界",
     "excerpt": "Agent 开发真正有价值的地方，不是自动化表演，而是把规划、范围控制和审查纳入稳定流程。",
     "tags": [
@@ -30,15 +27,68 @@
       "工作流",
       "工程"
     ],
-    "date": "2026-03-22"
+    "date": "2026-03-22",
+    "section": "文章",
+    "searchText": "agent 工作流的价值，不在于放飞，而在于边界 agent 开发真正有价值的地方，不是自动化表演，而是把规划、范围控制和审查纳入稳定流程。 agent 工作流 工程"
   },
   {
-    "slug": "bad-invalid-example",
-    "title": "这篇缺少 excerpt",
-    "excerpt": "",
+    "type": "post",
+    "slug": "weishenme-jijian-jiemian-geng-naikan",
+    "href": "/blog/weishenme-jijian-jiemian-geng-naikan",
+    "title": "为什么极简界面通常更耐看",
+    "excerpt": "个人网站最重要的不是装饰，而是让阅读毫不费力。真正的视觉自信，往往来自克制。",
     "tags": [
-      "测试"
+      "设计",
+      "界面",
+      "写作"
     ],
-    "date": "2026-03-23"
+    "date": "2026-03-18",
+    "section": "文章",
+    "searchText": "为什么极简界面通常更耐看 个人网站最重要的不是装饰，而是让阅读毫不费力。真正的视觉自信，往往来自克制。 设计 界面 写作"
+  },
+  {
+    "type": "post",
+    "slug": "zaoqi-boke-jiegou-biji",
+    "href": "/blog/zaoqi-boke-jiegou-biji",
+    "title": "早期博客架构的一些笔记",
+    "excerpt": "第一版最好的状态，不是功能齐全，而是尽快可上线，同时还给第二版留下足够空间。",
+    "tags": [
+      "架构",
+      "Next.js",
+      "博客"
+    ],
+    "date": "2026-03-12",
+    "section": "文章",
+    "searchText": "早期博客架构的一些笔记 第一版最好的状态，不是功能齐全，而是尽快可上线，同时还给第二版留下足够空间。 架构 next.js 博客"
+  },
+  {
+    "type": "project",
+    "slug": "openclaw-workflow",
+    "href": "/projects/openclaw-workflow",
+    "title": "OpenClaw 自动化工作流",
+    "excerpt": "使用 OpenClaw 构建的多 Agent 协作系统，实现翻译和博客维护的自动化。",
+    "tags": [
+      "OpenClaw",
+      "Node.js",
+      "Telegram Bot",
+      "TypeScript"
+    ],
+    "date": "2025-11-01",
+    "section": "项目",
+    "searchText": "openclaw 自动化工作流 使用 openclaw 构建的多 agent 协作系统，实现翻译和博客维护的自动化。 openclaw agent 自动化 node.js telegram bot typescript completed"
+  },
+  {
+    "type": "project",
+    "slug": "legacy-tools",
+    "href": "/projects/legacy-tools",
+    "title": "旧工具集",
+    "excerpt": "早期积累的命令行工具集合，现已归档，不再维护。",
+    "tags": [
+      "Node.js",
+      "Shell"
+    ],
+    "date": "2024-01-01",
+    "section": "项目",
+    "searchText": "旧工具集 早期积累的命令行工具集合，现已归档，不再维护。 node.js cli shell archived"
   }
 ]

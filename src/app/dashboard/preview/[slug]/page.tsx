@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { getPostBySlug } from "@/lib/posts";
+import { requireAuthorPageSession } from "@/lib/auth";
+import { getPostBySlugForAuthor } from "@/lib/posts";
 import ArticleRenderer from "@/components/article-renderer";
 
 interface Props {
@@ -12,7 +11,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = getPostBySlugForAuthor(slug);
 
   if (!post) {
     return { title: "预览" };
@@ -25,49 +24,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PreviewPage({ params }: Props) {
-  // 1. Auth check
-  const session = (await getServerSession(authOptions)) as unknown as {
-    user?: { whitelisted?: boolean } | null;
-  } | null;
+  await requireAuthorPageSession();
 
-  if (!session?.user) {
-    notFound();
-  }
-
-  if (session.user?.whitelisted === false) {
-    notFound();
-  }
-
-  // 2. Load post
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = getPostBySlugForAuthor(slug);
 
-  // 3. Only allow draft (published=false) posts; published posts have their own page
-  if (!post || post.published) {
+  if (!post) {
     notFound();
   }
 
   return (
     <article className="mx-auto max-w-2xl px-6 py-20">
-      {/* Top navigation */}
       <div className="mb-8 flex items-center justify-between">
         <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-1 text-sm text-text-muted hover:text-accent transition-colors duration-150"
+          href={`/dashboard/write/${post.slug}`}
+          className="inline-flex items-center gap-1 text-sm text-text-muted transition-colors duration-150 hover:text-accent"
         >
-          ← 返回控制台
+          ← 返回编辑器
         </Link>
         <Link
           href="/blog"
-          className="inline-flex items-center gap-1 text-sm text-text-muted hover:text-accent transition-colors duration-150"
+          className="inline-flex items-center gap-1 text-sm text-text-muted transition-colors duration-150 hover:text-accent"
         >
           返回博客 →
         </Link>
       </div>
 
-      {/* Draft banner */}
       <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
-        📝 这是草稿预览，内容尚未公开发布
+        {post.published ? "这是作者侧预览；文章已发布，公开页也会读取当前保存版本。" : "这是草稿预览，内容尚未公开发布。"}
       </div>
 
       <ArticleRenderer post={post} />

@@ -3,18 +3,24 @@ import { SearchBox } from "@/components/search-box";
 
 export const metadata: Metadata = {
   title: "搜索",
-  description: "搜索博客文章。",
+  description: "搜索博客文章与项目。",
   alternates: {
     canonical: "/search",
   },
 };
 
-export default function SearchPage() {
+type SearchPageProps = {
+  searchParams?: Promise<{ q?: string }>;
+};
+
+export default async function SearchPage({ searchParams }: SearchPageProps) {
+  const params = searchParams ? await searchParams : undefined;
+  const initialQuery = params?.q ?? "";
+
   return (
     <div className="mx-auto max-w-4xl px-6 py-20">
-      {/* Title */}
       <div className="relative mb-12 max-w-2xl pl-5">
-        <span className="absolute left-0 top-0 bottom-0 w-1 bg-accent rounded-full" />
+        <span className="absolute bottom-0 left-0 top-0 w-1 rounded-full bg-accent" />
         <p className="mb-3 text-sm uppercase tracking-[0.22em] text-text-muted">
           搜索
         </p>
@@ -23,7 +29,7 @@ export default function SearchPage() {
         </h1>
       </div>
 
-      <SearchBox />
+      <SearchBox initialQuery={initialQuery} />
     </div>
   );
 }

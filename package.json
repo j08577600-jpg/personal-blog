@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "dev:https": "node server/dev-https-server.mjs",
-    "build": "node scripts/build-search-index.mjs && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "prebuild": "node scripts/build-search-index.mjs",
+    "prebuild": "tsx scripts/build-search-index.ts",
     "postbuild": "next-sitemap --config next-sitemap.config.ts && npx tsx scripts/generate-feed.ts"
   },
   "dependencies": {
