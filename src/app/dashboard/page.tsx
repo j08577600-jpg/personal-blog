@@ -2,6 +2,12 @@ import Link from "next/link";
 import { requireAuthorPageSession } from "@/lib/auth";
 import { getAllPostEntries, type PostStatus } from "@/lib/posts";
 
+const providerLabels: Record<string, string> = {
+  github: "GitHub",
+  google: "Google",
+  "azure-ad": "Microsoft",
+};
+
 export default async function DashboardPage() {
   const session = await requireAuthorPageSession();
   const entries = getAllPostEntries();
@@ -9,6 +15,7 @@ export default async function DashboardPage() {
   const published = entries.filter((entry) => entry.status === "published");
   const drafts = entries.filter((entry) => entry.status === "draft");
   const invalid = entries.filter((entry) => entry.status === "invalid");
+  const providerLabel = session.user?.provider ? (providerLabels[session.user.provider] ?? session.user.provider) : "未提供";
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-20">
@@ -61,8 +68,14 @@ export default async function DashboardPage() {
                 <p className="font-medium text-text-primary">{session.user?.email || "未提供"}</p>
               </div>
               <div>
-                <p className="text-xs text-text-muted">GitHub ID</p>
-                <p className="break-all font-mono text-xs text-text-primary">{session.user?.id || "未提供"}</p>
+                <p className="text-xs text-text-muted">登录方式</p>
+                <p className="font-medium text-text-primary">{providerLabel}</p>
+              </div>
+              <div>
+                <p className="text-xs text-text-muted">Provider 账号 ID</p>
+                <p className="break-all font-mono text-xs text-text-primary">
+                  {session.user?.providerAccountId || session.user?.id || "未提供"}
+                </p>
               </div>
               <div>
                 <p className="text-xs text-text-muted">白名单</p>
