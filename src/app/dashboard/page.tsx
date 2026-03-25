@@ -91,6 +91,7 @@ export default async function DashboardPage() {
               <li>• 文件名格式：<code className="rounded bg-bg-subtle px-1 py-0.5 font-mono text-xs">yyyy-MM-dd_slug.mdx</code></li>
               <li>• <code className="rounded bg-bg-subtle px-1 py-0.5 font-mono text-xs">published: false</code> 为草稿</li>
               <li>• V2 写作工作台支持创建、保存、预览、发布与取消发布</li>
+              <li>• 运营面板：<Link href="/dashboard/ops" className="text-accent hover:underline">/dashboard/ops</Link></li>
             </ul>
           </section>
         </aside>

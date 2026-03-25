@@ -9,11 +9,18 @@ export type FrontmatterFormState = {
   excerpt: string;
   tags: string[];
   cover: string;
+  series: string;
+  recommended: boolean;
+  updatedAt: string;
+  updateNote: string;
   published: boolean;
 };
 
 export type FieldErrors = Partial<
-  Record<"title" | "date" | "slug" | "excerpt" | "tags" | "cover", string>
+  Record<
+    "title" | "date" | "slug" | "excerpt" | "tags" | "cover" | "series" | "updatedAt" | "updateNote",
+    string
+  >
 >;
 
 type FrontmatterFieldsProps = {
@@ -211,7 +218,7 @@ export default function FrontmatterFields({
       <section className="rounded-2xl border border-border bg-bg-subtle/60 p-4">
         <div className="mb-4">
           <p className="text-sm font-medium text-text-primary">组织与展示</p>
-          <p className="mt-1 text-xs text-text-muted">标签帮助归档，封面图用于卡片展示。</p>
+          <p className="mt-1 text-xs text-text-muted">只扩展现有文章 frontmatter，不绑定跨内容类型的统一运营模型。</p>
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           <label className="flex flex-col gap-2 md:col-span-2">
@@ -222,6 +229,36 @@ export default function FrontmatterFields({
               error={errors?.tags}
               onChange={(value) => onChange("tags", value)}
             />
+          </label>
+
+          <label className="flex flex-col gap-2">
+            <span className="text-sm font-medium text-text-primary">系列</span>
+            <input
+              value={form.series}
+              onChange={(event) => onChange("series", event.target.value)}
+              disabled={disabled}
+              className={inputClass(Boolean(errors?.series))}
+              placeholder="例如：V2 开发记录"
+            />
+            <span className="text-xs text-text-muted">用于同系列文章互相跳转；留空则不启用。</span>
+            {errors?.series ? <span className="text-xs text-red-600">{errors.series}</span> : null}
+          </label>
+
+          <label className="flex flex-col gap-2">
+            <span className="text-sm font-medium text-text-primary">推荐位</span>
+            <button
+              type="button"
+              onClick={() => onChange("recommended", !form.recommended)}
+              disabled={disabled}
+              className={`rounded-xl border px-4 py-3 text-left text-sm transition ${
+                form.recommended
+                  ? "border-accent bg-accent-subtle text-accent"
+                  : "border-border bg-bg-surface text-text-secondary hover:border-accent hover:text-accent"
+              }`}
+            >
+              {form.recommended ? "已加入首页推荐" : "未加入首页推荐"}
+            </button>
+            <span className="text-xs text-text-muted">只影响文章排序与首页推荐，不改变内容权限。</span>
           </label>
 
           <label className="flex flex-col gap-2 md:col-span-2">
@@ -235,6 +272,41 @@ export default function FrontmatterFields({
             />
             <span className="text-xs text-text-muted">可留空；建议填写站内绝对路径。</span>
             {errors?.cover ? <span className="text-xs text-red-600">{errors.cover}</span> : null}
+          </label>
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-border bg-bg-subtle/60 p-4">
+        <div className="mb-4">
+          <p className="text-sm font-medium text-text-primary">更新记录</p>
+          <p className="mt-1 text-xs text-text-muted">用于说明这次不是首次发布，而是对已发布文章的重要更新。</p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="flex flex-col gap-2">
+            <span className="text-sm font-medium text-text-primary">更新日期</span>
+            <input
+              value={form.updatedAt}
+              onChange={(event) => onChange("updatedAt", event.target.value)}
+              disabled={disabled}
+              className={inputClass(Boolean(errors?.updatedAt))}
+              placeholder="2026-03-25"
+            />
+            <span className="text-xs text-text-muted">留空表示没有单独更新记录。</span>
+            {errors?.updatedAt ? <span className="text-xs text-red-600">{errors.updatedAt}</span> : null}
+          </label>
+
+          <label className="flex flex-col gap-2 md:col-span-1">
+            <span className="text-sm font-medium text-text-primary">更新说明</span>
+            <textarea
+              value={form.updateNote}
+              onChange={(event) => onChange("updateNote", event.target.value)}
+              disabled={disabled}
+              rows={4}
+              className={inputClass(Boolean(errors?.updateNote))}
+              placeholder="例如：补充了部署检查清单与回滚说明。"
+            />
+            <span className="text-xs text-text-muted">填写说明时必须同时填写更新日期。</span>
+            {errors?.updateNote ? <span className="text-xs text-red-600">{errors.updateNote}</span> : null}
           </label>
         </div>
       </section>

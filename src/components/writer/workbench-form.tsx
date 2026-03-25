@@ -21,6 +21,10 @@ type WorkbenchFormProps = {
     excerpt: string;
     tags: string[];
     cover?: string;
+    series?: string;
+    recommended?: boolean;
+    updatedAt?: string;
+    updateNote?: string;
     published: boolean;
     body: string;
     sourceFileName: string;
@@ -69,6 +73,9 @@ function normalizeFieldErrors(message: string): FieldErrors {
   if (lower.includes("excerpt")) errors.excerpt = message;
   if (lower.includes("tag")) errors.tags = message;
   if (lower.includes("cover")) errors.cover = message;
+  if (lower.includes("series")) errors.series = message;
+  if (lower.includes("updatedat")) errors.updatedAt = message;
+  if (lower.includes("updatenote") || lower.includes("更新说明")) errors.updateNote = message;
 
   return Object.keys(errors).length > 0 ? errors : EMPTY_FIELD_ERRORS;
 }
@@ -83,6 +90,9 @@ function getBlockingIssues(form: FormState, forceDraftOnCreate: boolean, mode: W
   }
   if (!/^\d{4}-\d{2}-\d{2}$/.test(form.date.trim())) issues.push("日期格式须为 yyyy-MM-dd");
   if (!form.excerpt.trim()) issues.push("摘要不能为空");
+  if (form.updateNote.trim() && !/^\d{4}-\d{2}-\d{2}$/.test(form.updatedAt.trim())) {
+    issues.push("填写更新说明时，需要补上合法的更新日期");
+  }
   if (forceDraftOnCreate && mode === "create") issues.push("新建后先保存，再决定是否发布");
 
   return Array.from(new Set(issues));
@@ -90,6 +100,55 @@ function getBlockingIssues(form: FormState, forceDraftOnCreate: boolean, mode: W
 
 function formsEqual(a: FormState, b: FormState) {
   return JSON.stringify(a) === JSON.stringify(b);
+}
+
+function buildPublishChecklist(form: FormState, forceDraftOnCreate: boolean, mode: WorkbenchFormProps["mode"]) {
+  return [
+    {
+      label: "标题、slug、日期、摘要已补齐",
+      done:
+        Boolean(form.title.trim()) &&
+        Boolean(form.slug.trim()) &&
+        /^\d{4}-\d{2}-\d{2}$/.test(form.date.trim()) &&
+        Boolean(form.excerpt.trim()),
+    },
+    {
+      label: "本次发布地址已确认",
+      done: Boolean(form.slug.trim()) && form.slug.trim().length >= 4,
+    },
+    {
+      label: "正文已至少完成一轮保存",
+      done: Boolean(form.body.trim()),
+    },
+    {
+      label: "如为更新发布，已填写更新日期与更新说明",
+      done: !form.updateNote.trim() || /^\d{4}-\d{2}-\d{2}$/.test(form.updatedAt.trim()),
+    },
+    {
+      label: "当前动作允许发布",
+      done: !(forceDraftOnCreate && mode === "create"),
+    },
+  ];
+}
+
+function buildPublishConfirmText(form: FormState, publishIssues: string[]) {
+  const checklist = buildPublishChecklist(form, false, "edit")
+    .map((item) => `${item.done ? "[x]" : "[ ]"} ${item.label}`)
+    .join("\n");
+
+  return [
+    `确认发布《${form.title || "未命名文章"}》？`,
+    "",
+    `链接：/blog/${form.slug || "pending-slug"}`,
+    `日期：${form.date || "待填写"}`,
+    `系列：${form.series.trim() || "无"}`,
+    `首页推荐：${form.recommended ? "是" : "否"}`,
+    `更新记录：${form.updatedAt.trim() ? `${form.updatedAt.trim()} / ${form.updateNote.trim() || "已填日期"}` : "无"}`,
+    "",
+    "发布前 checklist：",
+    checklist,
+    ...(publishIssues.length > 0 ? ["", `仍有阻塞项：${publishIssues.join("；")}`] : []),
+  ].join("\n");
 }
 
 export default function WorkbenchForm({
@@ -107,6 +166,10 @@ export default function WorkbenchForm({
       excerpt: initialData.excerpt,
       tags: initialData.tags,
       cover: initialData.cover ?? "",
+      series: initialData.series ?? "",
+      recommended: initialData.recommended ?? false,
+      updatedAt: initialData.updatedAt ?? "",
+      updateNote: initialData.updateNote ?? "",
       published: initialData.published,
       body: initialData.body,
       sourceFileName: initialData.sourceFileName,
@@ -137,6 +200,8 @@ export default function WorkbenchForm({
   );
   const hasUnsavedChanges = !formsEqual(form, baselineFormRef.current);
   const publishIssues = getBlockingIssues(form, forceDraftOnCreate, mode);
+  const publishChecklist = buildPublishChecklist(form, forceDraftOnCreate, mode);
+  const publishReady = publishChecklist.every((item) => item.done) && publishIssues.length === 0;
 
   useEffect(() => {
     latestFormRef.current = form;
@@ -261,6 +326,10 @@ export default function WorkbenchForm({
         excerpt: form.excerpt,
         tags: form.tags,
         cover: form.cover,
+        series: form.series,
+        recommended: form.recommended,
+        updatedAt: form.updatedAt,
+        updateNote: form.updateNote,
         published: nextPublished,
         body: form.body,
         sourceFileName: form.sourceFileName,
@@ -304,7 +373,7 @@ export default function WorkbenchForm({
         result.warning ||
         (intent === "publish-toggle"
           ? savedPublished
-            ? "已确认发布"
+            ? "已完成发布并记录 checklist"
             : "已确认取消发布"
           : intent === "autosave"
             ? "自动保存完成"
@@ -513,7 +582,7 @@ export default function WorkbenchForm({
                 description={
                   form.published
                     ? "这篇文章已经对外可见；取消发布会保留文件，但从公开博客撤下。"
-                    : "这篇文章还是草稿；发布前会再次确认标题、slug 与日期。"
+                    : "这篇文章还是草稿；发布前会走一轮 checklist，确认这次到底会发布什么。"
                 }
               />
               <div className="mt-5 space-y-3">
@@ -539,7 +608,7 @@ export default function WorkbenchForm({
                     const ok = window.confirm(
                       form.published
                         ? `确认取消发布《${form.title || "未命名文章"}》？公开页会暂时下线，但文件仍保留。`
-                        : `确认发布《${form.title || "未命名文章"}》？\n\n链接：/blog/${form.slug || "pending-slug"}\n日期：${form.date || "待填写"}`
+                        : buildPublishConfirmText(form, publishIssues)
                     );
                     if (ok) {
                       void submit("publish-toggle");
@@ -560,6 +629,33 @@ export default function WorkbenchForm({
                     </ul>
                   </div>
                 ) : null}
+              </div>
+            </section>
+
+            <section className="rounded-2xl border border-border bg-bg-surface p-5 shadow-sm">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-medium text-text-primary">发布 checklist</p>
+                <span
+                  className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+                    publishReady ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
+                  }`}
+                >
+                  {publishReady ? "可发布" : "待补齐"}
+                </span>
+              </div>
+              <div className="mt-4 space-y-3 text-sm text-text-secondary">
+                {publishChecklist.map((item) => (
+                  <div key={item.label} className="flex items-start gap-3">
+                    <span
+                      className={`mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full text-xs font-medium ${
+                        item.done ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
+                      }`}
+                    >
+                      {item.done ? "✓" : "!"}
+                    </span>
+                    <p className="leading-6 text-text-primary">{item.label}</p>
+                  </div>
+                ))}
               </div>
             </section>
 

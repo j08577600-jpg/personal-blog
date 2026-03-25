@@ -22,6 +22,10 @@ export type AuthorPostInput = {
   excerpt: string;
   tags: string[];
   cover?: string;
+  series?: string;
+  recommended?: boolean;
+  updatedAt?: string;
+  updateNote?: string;
   published: boolean;
   body: string;
 };
@@ -74,6 +78,15 @@ function normalizeCover(cover: unknown) {
   return trimmed ? trimmed : undefined;
 }
 
+function normalizeOptionalText(value: unknown) {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  return trimmed ? trimmed : undefined;
+}
+
 export function buildPostFileName(date: string, slug: string) {
   return `${date}_${slug}.mdx`;
 }
@@ -117,11 +130,33 @@ function serializePostFile(input: AuthorPostInput) {
     tags: input.tags,
     published: input.published,
     cover: normalizeCover(input.cover),
+    series: normalizeOptionalText(input.series),
+    recommended: Boolean(input.recommended),
+    updatedAt: normalizeOptionalText(input.updatedAt),
+    updateNote: normalizeOptionalText(input.updateNote),
   });
-  const { cover, ...frontmatterWithoutCover } = frontmatter;
-  const serializedFrontmatter = cover
-    ? { ...frontmatterWithoutCover, cover }
-    : frontmatterWithoutCover;
+
+  if (frontmatter.updateNote && !frontmatter.updatedAt) {
+    throw new AuthorPostError(400, "填写更新说明时，也需要填写更新日期");
+  }
+
+  const {
+    cover,
+    series,
+    recommended,
+    updatedAt,
+    updateNote,
+    ...frontmatterWithoutOptionalFields
+  } = frontmatter;
+
+  const serializedFrontmatter = {
+    ...frontmatterWithoutOptionalFields,
+    ...(cover ? { cover } : {}),
+    ...(series ? { series } : {}),
+    ...(recommended ? { recommended } : {}),
+    ...(updatedAt ? { updatedAt } : {}),
+    ...(updateNote ? { updateNote } : {}),
+  };
 
   const content = input.body.replace(/\r\n/g, "\n").trimEnd();
   return `${matter.stringify(content ? `${content}\n` : "", serializedFrontmatter).trimEnd()}\n`;
@@ -137,6 +172,10 @@ function validateInput(input: Partial<AuthorPostPayload>) {
   const body = typeof input.body === "string" ? input.body : "";
   const tags = normalizeTags(input.tags);
   const cover = normalizeCover(input.cover);
+  const series = normalizeOptionalText(input.series);
+  const recommended = Boolean(input.recommended);
+  const updatedAt = normalizeOptionalText(input.updatedAt);
+  const updateNote = normalizeOptionalText(input.updateNote);
 
   if (!title) {
     throw new AuthorPostError(400, "title 不能为空");
@@ -158,6 +197,14 @@ function validateInput(input: Partial<AuthorPostPayload>) {
     throw new AuthorPostError(400, "excerpt 不能为空");
   }
 
+  if (updatedAt && !DATE_PATTERN.test(updatedAt)) {
+    throw new AuthorPostError(400, "updatedAt 格式须为 yyyy-MM-dd");
+  }
+
+  if (updateNote && !updatedAt) {
+    throw new AuthorPostError(400, "填写更新说明时，也需要填写更新日期");
+  }
+
   return {
     title,
     date,
@@ -165,6 +212,10 @@ function validateInput(input: Partial<AuthorPostPayload>) {
     excerpt,
     tags,
     cover,
+    series,
+    recommended,
+    updatedAt,
+    updateNote,
     published,
     body,
   } satisfies AuthorPostInput;
@@ -194,6 +245,10 @@ export function createEmptyDraft() {
     excerpt: "",
     tags: [],
     cover: "",
+    series: "",
+    recommended: false,
+    updatedAt: "",
+    updateNote: "",
     published: false,
     body: "",
     sourceFileName: "",
@@ -223,6 +278,10 @@ export function getEditablePostBySlug(slug: string): AuthorEditablePost {
     excerpt: parsed.frontmatter.excerpt,
     tags: parsed.frontmatter.tags,
     cover: parsed.frontmatter.cover ?? "",
+    series: parsed.frontmatter.series ?? "",
+    recommended: parsed.frontmatter.recommended ?? false,
+    updatedAt: parsed.frontmatter.updatedAt ?? "",
+    updateNote: parsed.frontmatter.updateNote ?? "",
     published: parsed.frontmatter.published,
     body: parsed.content,
     sourceFileName: entry.fileName,
