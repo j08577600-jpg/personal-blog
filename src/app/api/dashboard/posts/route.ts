@@ -16,6 +16,10 @@ export async function POST(request: Request) {
       excerpt?: string;
       tags?: string[] | string;
       cover?: string;
+      series?: string;
+      recommended?: boolean;
+      updatedAt?: string;
+      updateNote?: string;
       published?: boolean;
       body?: string;
     };
@@ -26,6 +30,10 @@ export async function POST(request: Request) {
       excerpt: body.excerpt,
       tags: body.tags,
       cover: body.cover,
+      series: body.series,
+      recommended: body.recommended,
+      updatedAt: body.updatedAt,
+      updateNote: body.updateNote,
       published: body.published,
       body: body.body,
     };

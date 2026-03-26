@@ -1,51 +1,55 @@
 import Link from "next/link";
+import { siteConfig } from "@/lib/site";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border mt-auto">
+    <footer className="mt-auto border-t border-border">
       <div className="mx-auto max-w-4xl px-6 py-10">
-        {/* Logo + socials row */}
-        <div className="flex items-center justify-between mb-4">
-          <Link href="/" className="relative flex items-center gap-2 group">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
-            <span className="text-sm font-semibold text-text-primary tracking-tight">
+        <div className="mb-4 flex items-center justify-between">
+          <Link href="/" className="group relative flex items-center gap-2">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+            <span className="text-sm font-semibold tracking-tight text-text-primary">
               jay
             </span>
           </Link>
-          <div className="flex gap-4 text-text-muted text-sm">
+          <div className="flex gap-4 text-sm text-text-muted">
             <a
               href="https://github.com/j08577600-jpg"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-accent transition-colors duration-150"
+              className="transition-colors duration-150 hover:text-accent"
             >
               GitHub
             </a>
             <a
               href="/feed.xml"
-              className="hover:text-accent transition-colors duration-150"
+              className="transition-colors duration-150 hover:text-accent"
             >
               RSS
             </a>
           </div>
         </div>
 
-        {/* Link row */}
         <div className="flex flex-wrap gap-6 text-xs text-text-muted">
-          <Link href="/blog" className="hover:text-text-secondary transition-colors duration-150">
+          <Link href="/blog" className="transition-colors duration-150 hover:text-text-secondary">
             博客
           </Link>
-          <Link href="/about" className="hover:text-text-secondary transition-colors duration-150">
+          <Link href="/about" className="transition-colors duration-150 hover:text-text-secondary">
             关于
           </Link>
-          <Link href="/blog/tags" className="hover:text-text-secondary transition-colors duration-150">
+          <Link href="/blog/tags" className="transition-colors duration-150 hover:text-text-secondary">
             标签
           </Link>
+          <a
+            href={`mailto:${siteConfig.feedback.email}`}
+            className="transition-colors duration-150 hover:text-text-secondary"
+          >
+            反馈
+          </a>
         </div>
 
-        {/* Copyright */}
         <p className="mt-4 text-xs text-text-muted">
-          © 2026 · 使用 Next.js 构建
+          © 2026 · 使用 Next.js 构建 · 反馈请发 {siteConfig.feedback.email}
         </p>
       </div>
     </footer>

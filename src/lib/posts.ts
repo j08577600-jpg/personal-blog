@@ -3,15 +3,24 @@ import path from "path";
 import matter from "gray-matter";
 import readingTime from "reading-time";
 import { z } from "zod";
+import { buildExcerpt, type SharedContentMeta } from "@/lib/content";
+
+const DateStringSchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "日期格式须为 yyyy-MM-dd");
 
 export const PostFrontmatterSchema = z.object({
   title: z.string().min(1, "title 不能为空"),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "date 格式须为 yyyy-MM-dd"),
+  date: DateStringSchema,
   slug: z.string().min(1, "slug 不能为空"),
   excerpt: z.string().min(1, "excerpt 不能为空"),
   tags: z.array(z.string()).default([]),
   published: z.boolean(),
   cover: z.string().optional(),
+  series: z.string().min(1, "series 不能为空").optional(),
+  recommended: z.boolean().optional(),
+  updatedAt: DateStringSchema.optional(),
+  updateNote: z.string().min(1, "updateNote 不能为空").optional(),
 });
 
 export type PostFrontmatter = z.infer<typeof PostFrontmatterSchema>;
@@ -26,6 +35,10 @@ export type Post = {
   content: string;
   published: boolean;
   cover?: string;
+  series?: string;
+  recommended?: boolean;
+  updatedAt?: string;
+  updateNote?: string;
 };
 
 export type PostStatus = "published" | "draft" | "invalid";
@@ -36,6 +49,10 @@ export type PostEntry = {
   post: Post | null;
   validationError?: string;
   frontmatter?: PostFrontmatter;
+};
+
+export type PublicPostMeta = SharedContentMeta & {
+  type: "post";
 };
 
 export const POSTS_DIR = path.join(process.cwd(), "content/posts");
@@ -67,6 +84,10 @@ function parseAndValidate(fileName: string): { post: Post | null; error: string 
         tags: frontmatter.tags,
         published: frontmatter.published,
         cover: frontmatter.cover,
+        series: frontmatter.series,
+        recommended: frontmatter.recommended ?? false,
+        updatedAt: frontmatter.updatedAt,
+        updateNote: frontmatter.updateNote,
         readingTime: rt.text,
         content,
       },
@@ -113,6 +134,10 @@ function buildPostEntry(fileName: string): PostEntry {
       tags: post.tags,
       published: post.published,
       cover: post.cover,
+      series: post.series,
+      recommended: post.recommended,
+      updatedAt: post.updatedAt,
+      updateNote: post.updateNote,
     },
   };
 }
@@ -128,7 +153,12 @@ export function getPosts(): Post[] {
           result.error === null && result.post !== null && result.post.published
       )
       .map((result) => result.post)
-      .sort((a, b) => (a.date < b.date ? 1 : -1));
+      .sort((a, b) => {
+        if (a.recommended !== b.recommended) {
+          return a.recommended ? -1 : 1;
+        }
+        return a.date < b.date ? 1 : -1;
+      });
   } catch {
     return [];
   }
@@ -179,7 +209,35 @@ export function getAllValidPosts(): Post[] {
   return getAllPostEntries()
     .filter((entry) => entry.status !== "invalid" && entry.post !== null)
     .map((entry) => entry.post as Post)
-    .sort((a, b) => (a.date < b.date ? 1 : -1));
+    .sort((a, b) => {
+      if (a.recommended !== b.recommended) {
+        return a.recommended ? -1 : 1;
+      }
+      return a.date < b.date ? 1 : -1;
+    });
+}
+
+export function getRecommendedPosts(limit?: number, excludeSlug?: string): Post[] {
+  const recommended = getPosts().filter((post) => post.recommended && post.slug !== excludeSlug);
+  return typeof limit === "number" ? recommended.slice(0, limit) : recommended;
+}
+
+export function getPostsInSeries(series: string, excludeSlug?: string): Post[] {
+  return getPosts()
+    .filter((post) => post.series === series && post.slug !== excludeSlug)
+    .sort((a, b) => (a.date > b.date ? 1 : -1));
+}
+
+export function getPublicPostsMeta(): PublicPostMeta[] {
+  return getPosts().map((post) => ({
+    type: "post" as const,
+    slug: post.slug,
+    title: post.title,
+    excerpt: buildExcerpt(post.content, post.excerpt),
+    date: post.date,
+    tags: post.tags,
+    published: post.published,
+  }));
 }
 
 export type TagEntry = {

@@ -1,19 +1,19 @@
 # personal-blog
 
-一个极简的中文技术个人博客项目，基于 Next.js、TypeScript、Tailwind CSS 与 GitHub OAuth（NextAuth）构建。
+一个极简的中文技术个人博客项目，基于 Next.js、TypeScript、Tailwind CSS 与 NextAuth OAuth 构建。
 
 ## 技术栈
 - Next.js
 - TypeScript
 - Tailwind CSS
-- NextAuth（GitHub 登录）
+- NextAuth（GitHub / Google / Microsoft 登录）
 
 ## 第一版功能
 - 极简首页
 - 关于页
 - 博客列表页
 - 基于本地数据的文章详情页
-- GitHub 登录页
+- 多 provider 登录页
 - 受保护的控制台种子页
 - 本地 HTTPS 开发辅助脚本
 - 域名反代配置模板
@@ -30,15 +30,30 @@ cp .env.example .env.local
 - `NEXTAUTH_URL`
 - `GITHUB_ID`
 - `GITHUB_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `MICROSOFT_CLIENT_ID`
+- `MICROSOFT_CLIENT_SECRET`
+- `MICROSOFT_TENANT_ID`
+- `ALLOWED_AUTHOR_EMAILS`
 
-## GitHub OAuth 配置
+## OAuth 配置
 正式域名使用：
 - Homepage URL: `https://blog.chenjilan.com`
-- Callback URL: `https://blog.chenjilan.com/api/auth/callback/github`
+- GitHub Callback URL: `https://blog.chenjilan.com/api/auth/callback/github`
+- Google Callback URL: `https://blog.chenjilan.com/api/auth/callback/google`
+- Microsoft Callback URL: `https://blog.chenjilan.com/api/auth/callback/azure-ad`
 
 临时本地 HTTP 开发可用：
 - Homepage URL: `http://localhost:8080`
-- Callback URL: `http://localhost:8080/api/auth/callback/github`
+- GitHub Callback URL: `http://localhost:8080/api/auth/callback/github`
+- Google Callback URL: `http://localhost:8080/api/auth/callback/google`
+- Microsoft Callback URL: `http://localhost:8080/api/auth/callback/azure-ad`
+
+说明：
+- 登录 provider 可按环境变量启用或关闭；未配置完整凭据的 provider 不会显示在登录页。
+- 作者权限只认 `ALLOWED_AUTHOR_EMAILS`，不会因 provider 不同而改变授权结果。
+- Microsoft 需额外提供 `MICROSOFT_TENANT_ID`。
 
 ## 本地开发
 

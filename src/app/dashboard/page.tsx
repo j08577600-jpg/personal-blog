@@ -2,6 +2,12 @@ import Link from "next/link";
 import { requireAuthorPageSession } from "@/lib/auth";
 import { getAllPostEntries, type PostStatus } from "@/lib/posts";
 
+const providerLabels: Record<string, string> = {
+  github: "GitHub",
+  google: "Google",
+  "azure-ad": "Microsoft",
+};
+
 export default async function DashboardPage() {
   const session = await requireAuthorPageSession();
   const entries = getAllPostEntries();
@@ -9,6 +15,7 @@ export default async function DashboardPage() {
   const published = entries.filter((entry) => entry.status === "published");
   const drafts = entries.filter((entry) => entry.status === "draft");
   const invalid = entries.filter((entry) => entry.status === "invalid");
+  const providerLabel = session.user?.provider ? (providerLabels[session.user.provider] ?? session.user.provider) : "未提供";
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-20">
@@ -61,8 +68,14 @@ export default async function DashboardPage() {
                 <p className="font-medium text-text-primary">{session.user?.email || "未提供"}</p>
               </div>
               <div>
-                <p className="text-xs text-text-muted">GitHub ID</p>
-                <p className="break-all font-mono text-xs text-text-primary">{session.user?.id || "未提供"}</p>
+                <p className="text-xs text-text-muted">登录方式</p>
+                <p className="font-medium text-text-primary">{providerLabel}</p>
+              </div>
+              <div>
+                <p className="text-xs text-text-muted">Provider 账号 ID</p>
+                <p className="break-all font-mono text-xs text-text-primary">
+                  {session.user?.providerAccountId || session.user?.id || "未提供"}
+                </p>
               </div>
               <div>
                 <p className="text-xs text-text-muted">白名单</p>
@@ -78,6 +91,7 @@ export default async function DashboardPage() {
               <li>• 文件名格式：<code className="rounded bg-bg-subtle px-1 py-0.5 font-mono text-xs">yyyy-MM-dd_slug.mdx</code></li>
               <li>• <code className="rounded bg-bg-subtle px-1 py-0.5 font-mono text-xs">published: false</code> 为草稿</li>
               <li>• V2 写作工作台支持创建、保存、预览、发布与取消发布</li>
+              <li>• 运营面板：<Link href="/dashboard/ops" className="text-accent hover:underline">/dashboard/ops</Link></li>
             </ul>
           </section>
         </aside>

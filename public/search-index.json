@@ -1,5 +1,35 @@
 [
   {
+    "type": "reading",
+    "slug": "dao-shu-si-wei",
+    "href": "/reading-list/dao-shu-si-wei",
+    "title": "道术思维：从孙子兵法到现代博弈论",
+    "excerpt": "古典谋略与现代决策 书籍 · 已读完",
+    "tags": [
+      "战略",
+      "思维模型",
+      "古典"
+    ],
+    "date": "2026-03-24",
+    "section": "阅读",
+    "searchText": "道术思维：从孙子兵法到现代博弈论 古典谋略与现代决策 书籍 · 已读完 战略 思维模型 古典 古典谋略与现代决策 华夏出版社 book completed"
+  },
+  {
+    "type": "note",
+    "slug": "pin-zhi-xing-jia-ge",
+    "href": "/notes/pin-zhi-xing-jia-ge",
+    "title": "品质溢价：为什么有人愿意为细节多付十倍价格",
+    "excerpt": "品质溢价笔记 最近在思考一个现象：同样是功能相似的产品，有些品牌的价格是其他品牌的 5-10 倍，却依然卖得动。 观察 - 功能性需求 可以被低价替代品满足 - 体验性需求 （使用过程的美感、仪式感、身份认同）很难被替代 - 愿意付溢价的人…",
+    "tags": [
+      "商业",
+      "消费",
+      "产品"
+    ],
+    "date": "2026-03-24",
+    "section": "笔记",
+    "searchText": "品质溢价：为什么有人愿意为细节多付十倍价格 品质溢价笔记 最近在思考一个现象：同样是功能相似的产品，有些品牌的价格是其他品牌的 5-10 倍，却依然卖得动。 观察 - 功能性需求 可以被低价替代品满足 - 体验性需求 （使用过程的美感、仪式感、身份认同）很难被替代 - 愿意付溢价的人… 商业 消费 产品"
+  },
+  {
     "type": "project",
     "slug": "personal-blog",
     "href": "/projects/personal-blog",
@@ -14,7 +44,22 @@
     ],
     "date": "2026-03-24",
     "section": "项目",
-    "searchText": "personal blog 基于 next.js 16 的极简技术博客，支持 mdx、标签聚合、站点地图和 rss。 next.js typescript mdx tailwind next.js 16 tailwind css 4 nextauth v4 active"
+    "searchText": "personal blog 基于 next.js 16 的极简技术博客，支持 mdx、标签聚合、站点地图和 rss。 next.js 16 typescript mdx tailwind css 4 nextauth v4 active"
+  },
+  {
+    "type": "note",
+    "slug": "chan-pin-she-ji-yu-fan-yi",
+    "href": "/notes/chan-pin-she-ji-yu-fan-yi",
+    "title": "产品设计与翻译的共通之处",
+    "excerpt": "产品设计与翻译 发现产品设计和翻译之间有一个深层共通： 两者都是在\"约束下的再创造\"。 翻译有原文的约束（内容、语气、风格），产品设计有用户需求的约束（功能、体验、成本）。优秀的译者和优秀的产品经理都在约束里找到了自由度——不是照搬，不是随…",
+    "tags": [
+      "产品",
+      "翻译",
+      "思维"
+    ],
+    "date": "2026-03-22",
+    "section": "笔记",
+    "searchText": "产品设计与翻译的共通之处 产品设计与翻译 发现产品设计和翻译之间有一个深层共通： 两者都是在\"约束下的再创造\"。 翻译有原文的约束（内容、语气、风格），产品设计有用户需求的约束（功能、体验、成本）。优秀的译者和优秀的产品经理都在约束里找到了自由度——不是照搬，不是随… 产品 翻译 思维"
   },
   {
     "type": "post",
@@ -30,6 +75,21 @@
     "date": "2026-03-22",
     "section": "文章",
     "searchText": "agent 工作流的价值，不在于放飞，而在于边界 agent 开发真正有价值的地方，不是自动化表演，而是把规划、范围控制和审查纳入稳定流程。 agent 工作流 工程"
+  },
+  {
+    "type": "reading",
+    "slug": "ji-qi-xue-xi-zhi-lu",
+    "href": "/reading-list/ji-qi-xue-xi-zhi-lu",
+    "title": "机器学习之路：从理论到工程实践",
+    "excerpt": "吴恩达 文章 · 在读",
+    "tags": [
+      "机器学习",
+      "工程",
+      "AI"
+    ],
+    "date": "2026-03-20",
+    "section": "阅读",
+    "searchText": "机器学习之路：从理论到工程实践 吴恩达 文章 · 在读 机器学习 工程 ai 吴恩达 deeplearning.ai article reading"
   },
   {
     "type": "post",
@@ -75,7 +135,7 @@
     ],
     "date": "2025-11-01",
     "section": "项目",
-    "searchText": "openclaw 自动化工作流 使用 openclaw 构建的多 agent 协作系统，实现翻译和博客维护的自动化。 openclaw agent 自动化 node.js telegram bot typescript completed"
+    "searchText": "openclaw 自动化工作流 使用 openclaw 构建的多 agent 协作系统，实现翻译和博客维护的自动化。 openclaw node.js telegram bot typescript completed"
   },
   {
     "type": "project",
@@ -89,6 +149,6 @@
     ],
     "date": "2024-01-01",
     "section": "项目",
-    "searchText": "旧工具集 早期积累的命令行工具集合，现已归档，不再维护。 node.js cli shell archived"
+    "searchText": "旧工具集 早期积累的命令行工具集合，现已归档，不再维护。 node.js shell archived"
   }
 ]

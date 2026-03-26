@@ -22,6 +22,17 @@ export const siteConfig = {
     github: "https://github.com/j08577600-jpg",
   },
 
+  analytics: {
+    provider: "manual",
+    dashboardPath: "/dashboard/ops",
+    note: "当前仅提供最小接入位与运行说明；待统一内容模型和真实流量后，再决定是否接 Plausible / Umami。",
+  },
+
+  feedback: {
+    email: "hi@chenjilan.com",
+    note: "当前阶段先用邮件收集勘误、合作与阅读反馈，不做评论系统。",
+  },
+
   navigation: [
     { href: "/blog", label: "博客" },
     { href: "/projects", label: "项目" },

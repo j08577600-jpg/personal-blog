@@ -44,6 +44,10 @@ export async function PUT(request: Request, { params }: Props) {
       excerpt?: string;
       tags?: string[] | string;
       cover?: string;
+      series?: string;
+      recommended?: boolean;
+      updatedAt?: string;
+      updateNote?: string;
       published?: boolean;
       body?: string;
       sourceFileName?: string;
@@ -59,6 +63,10 @@ export async function PUT(request: Request, { params }: Props) {
       excerpt: body.excerpt,
       tags: body.tags,
       cover: body.cover,
+      series: body.series,
+      recommended: body.recommended,
+      updatedAt: body.updatedAt,
+      updateNote: body.updateNote,
       published: body.published,
       body: body.body,
       sourceFileName: body.sourceFileName,

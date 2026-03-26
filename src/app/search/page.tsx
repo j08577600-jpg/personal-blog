@@ -3,7 +3,7 @@ import { SearchBox } from "@/components/search-box";
 
 export const metadata: Metadata = {
   title: "搜索",
-  description: "搜索博客文章与项目。",
+  description: "搜索博客中的文章、项目、笔记与阅读记录。",
   alternates: {
     canonical: "/search",
   },
@@ -25,7 +25,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           搜索
         </p>
         <h1 className="text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
-          找到你感兴趣的内容。
+          在全站内容里找到你感兴趣的东西。
         </h1>
       </div>
 

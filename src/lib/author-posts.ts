@@ -7,6 +7,7 @@ import {
   parsePostFile,
   POSTS_DIR,
 } from "@/lib/posts";
+import { slugifyPostValue } from "@/lib/post-slug";
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -21,6 +22,10 @@ export type AuthorPostInput = {
   excerpt: string;
   tags: string[];
   cover?: string;
+  series?: string;
+  recommended?: boolean;
+  updatedAt?: string;
+  updateNote?: string;
   published: boolean;
   body: string;
 };
@@ -48,30 +53,20 @@ function getTodayDateString() {
   return new Date().toISOString().slice(0, 10);
 }
 
-export function slugifyPostValue(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .replace(/-{2,}/g, "-");
-}
-
 function normalizeTags(tags: unknown) {
-  if (Array.isArray(tags)) {
-    return tags
-      .map((tag) => String(tag).trim())
-      .filter(Boolean);
-  }
+  const source = Array.isArray(tags)
+    ? tags
+    : typeof tags === "string"
+      ? tags.split(",")
+      : [];
 
-  if (typeof tags === "string") {
-    return tags
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter(Boolean);
-  }
-
-  return [];
+  return Array.from(
+    new Set(
+      source
+        .map((tag) => String(tag).trim())
+        .filter(Boolean)
+    )
+  );
 }
 
 function normalizeCover(cover: unknown) {
@@ -80,6 +75,15 @@ function normalizeCover(cover: unknown) {
   }
 
   const trimmed = cover.trim();
+  return trimmed ? trimmed : undefined;
+}
+
+function normalizeOptionalText(value: unknown) {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
   return trimmed ? trimmed : undefined;
 }
 
@@ -126,11 +130,33 @@ function serializePostFile(input: AuthorPostInput) {
     tags: input.tags,
     published: input.published,
     cover: normalizeCover(input.cover),
+    series: normalizeOptionalText(input.series),
+    recommended: Boolean(input.recommended),
+    updatedAt: normalizeOptionalText(input.updatedAt),
+    updateNote: normalizeOptionalText(input.updateNote),
   });
-  const { cover, ...frontmatterWithoutCover } = frontmatter;
-  const serializedFrontmatter = cover
-    ? { ...frontmatterWithoutCover, cover }
-    : frontmatterWithoutCover;
+
+  if (frontmatter.updateNote && !frontmatter.updatedAt) {
+    throw new AuthorPostError(400, "填写更新说明时，也需要填写更新日期");
+  }
+
+  const {
+    cover,
+    series,
+    recommended,
+    updatedAt,
+    updateNote,
+    ...frontmatterWithoutOptionalFields
+  } = frontmatter;
+
+  const serializedFrontmatter = {
+    ...frontmatterWithoutOptionalFields,
+    ...(cover ? { cover } : {}),
+    ...(series ? { series } : {}),
+    ...(recommended ? { recommended } : {}),
+    ...(updatedAt ? { updatedAt } : {}),
+    ...(updateNote ? { updateNote } : {}),
+  };
 
   const content = input.body.replace(/\r\n/g, "\n").trimEnd();
   return `${matter.stringify(content ? `${content}\n` : "", serializedFrontmatter).trimEnd()}\n`;
@@ -140,13 +166,16 @@ function validateInput(input: Partial<AuthorPostPayload>) {
   const title = typeof input.title === "string" ? input.title.trim() : "";
   const date = typeof input.date === "string" ? input.date.trim() : getTodayDateString();
   const slugSource = typeof input.slug === "string" ? input.slug.trim() : "";
-  const generatedSlug = slugifyPostValue(title) || `untitled-${Date.now()}`;
-  const slug = slugifyPostValue(slugSource || generatedSlug);
+  const slug = slugifyPostValue(slugSource);
   const excerpt = typeof input.excerpt === "string" ? input.excerpt.trim() : "";
   const published = Boolean(input.published);
   const body = typeof input.body === "string" ? input.body : "";
   const tags = normalizeTags(input.tags);
   const cover = normalizeCover(input.cover);
+  const series = normalizeOptionalText(input.series);
+  const recommended = Boolean(input.recommended);
+  const updatedAt = normalizeOptionalText(input.updatedAt);
+  const updateNote = normalizeOptionalText(input.updateNote);
 
   if (!title) {
     throw new AuthorPostError(400, "title 不能为空");
@@ -168,6 +197,14 @@ function validateInput(input: Partial<AuthorPostPayload>) {
     throw new AuthorPostError(400, "excerpt 不能为空");
   }
 
+  if (updatedAt && !DATE_PATTERN.test(updatedAt)) {
+    throw new AuthorPostError(400, "updatedAt 格式须为 yyyy-MM-dd");
+  }
+
+  if (updateNote && !updatedAt) {
+    throw new AuthorPostError(400, "填写更新说明时，也需要填写更新日期");
+  }
+
   return {
     title,
     date,
@@ -175,6 +212,10 @@ function validateInput(input: Partial<AuthorPostPayload>) {
     excerpt,
     tags,
     cover,
+    series,
+    recommended,
+    updatedAt,
+    updateNote,
     published,
     body,
   } satisfies AuthorPostInput;
@@ -204,6 +245,10 @@ export function createEmptyDraft() {
     excerpt: "",
     tags: [],
     cover: "",
+    series: "",
+    recommended: false,
+    updatedAt: "",
+    updateNote: "",
     published: false,
     body: "",
     sourceFileName: "",
@@ -233,6 +278,10 @@ export function getEditablePostBySlug(slug: string): AuthorEditablePost {
     excerpt: parsed.frontmatter.excerpt,
     tags: parsed.frontmatter.tags,
     cover: parsed.frontmatter.cover ?? "",
+    series: parsed.frontmatter.series ?? "",
+    recommended: parsed.frontmatter.recommended ?? false,
+    updatedAt: parsed.frontmatter.updatedAt ?? "",
+    updateNote: parsed.frontmatter.updateNote ?? "",
     published: parsed.frontmatter.published,
     body: parsed.content,
     sourceFileName: entry.fileName,
@@ -266,6 +315,7 @@ export function createDraft(input: Partial<AuthorPostPayload>) {
     fileName,
     lastKnownMtimeMs: stat.mtimeMs,
     warning: null as string | null,
+    published: normalized.published,
   };
 }
 
@@ -294,7 +344,10 @@ export function updateDraft(
   }
 
   if (Math.abs(sourceStat.mtimeMs - lastKnownMtimeMs) > 1) {
-    throw new AuthorPostError(409, "文件已更新，请刷新后重试");
+    throw new AuthorPostError(
+      409,
+      "文件已被其他修改覆盖，需要先刷新或恢复本地内容后再决定保留哪一版"
+    );
   }
 
   const currentEditable = getEditablePostBySlug(currentSlug);
@@ -329,6 +382,7 @@ export function updateDraft(
   if (targetPath !== sourcePath) {
     try {
       fs.unlinkSync(sourcePath);
+      warning = `slug 或日期已变更，编辑器已切换到 ${nextFileName}`;
     } catch {
       warning = "内容已保存到新文件，但旧文件待人工清理";
     }
